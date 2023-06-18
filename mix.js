@@ -756,11 +756,11 @@ batoni.addEventListener("click", () => {
             .then(data => {
               if(data.message){
                 console.log(data.message._id) // if this true show massage with the base_url + /waiting + _id
-              }                               // and make this route to check if the this 
-              console.log('Response:', data);
-              localStorage.setItem("order_id",data._id)
-              localStorage.setItem("url",this.baseURI+"/"+data._id)
-              // Handle the response data here
+              }else {                          // and make this route to check if the this 
+                console.log('Response:', data);
+                localStorage.setItem("order_id",data._id)
+                localStorage.setItem("url",this.baseURI+"/"+data._id)
+              }
             })
             .catch(error => {
               console.error('Error:', error);
