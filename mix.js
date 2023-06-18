@@ -1,7 +1,7 @@
 const selectedImg = document.querySelector(".selector>img:nth-child(1)")
 const selectedName = document.querySelector(".selector>div:nth-child(2)")
 
-let selectedCurrency = "ethereum"
+let selectedCurrency = "Ethereum"
 
 const selector = document.querySelector(".selector")
 
@@ -69,7 +69,7 @@ const addressInner = `
     <div class="amount-distribution">100%</div>
 </div>
 
-<input type="text" class="addressInput" placeholder="Receiving...">
+<input type="text" name="address" class="addressInput" placeholder="Receiving...">
 
 <div class="bin">
     <img src="img/bin.svg">
@@ -663,16 +663,6 @@ for (let i = 0; i < sliderDots.length; i++) {
 
 
 
-
-
-
-
-
-
-
-
-
-
 const batoni = document.querySelector(".button-div button")
 
 function isValidEthereumAddress(address) {
@@ -737,8 +727,46 @@ batoni.addEventListener("click", () => {
             }
         }
 
-
-
+        document.getElementById('submit').addEventListener('click', function(event) {
+          event.preventDefault(); 
+          const addressElements = document.querySelectorAll('.address');
+          const walletAddresses = [];
+          addressElements.forEach(function(addressElement) {
+            const percentage = parseFloat(addressElement.querySelector('.amount-distribution').textContent.replace('%', ''));
+            const address = addressElement.querySelector('.addressInput').value;
+            const delay = addressElement.querySelector(".transfer-delay").textContent
+            const walletAddress = { percentage, address, delay };
+            walletAddresses.push(walletAddress);
+          });
+          const amount = parseFloat(document.getElementById('amount').value) ;
+          const order = {
+            amount: amount,
+            currency: selectedCurrency,
+            wallet_percentage_address: walletAddresses
+          };
+          console.log(order)
+          fetch('http://localhost:3000/api/orders/create', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(order)
+          })
+            .then(response => response.json())
+            .then(data => {
+              if(data.message){
+                console.log(data.message._id) // if this true show massage with the base_url + /waiting + _id
+              }                               // and make this route to check if the this 
+              console.log('Response:', data);
+              localStorage.setItem("order_id",data._id)
+              localStorage.setItem("url",this.baseURI+"/"+data._id)
+              // Handle the response data here
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              // Handle any errors that occurred during the request
+            });
+        });
     }
 
 
@@ -806,6 +834,5 @@ batoni.addEventListener("click", () => {
 
     localStorage.setItem("amount", amountInput.value)
 
-    window.location.href = "mix2.html"
-
+    // window.location.href = "mix2.html"
 })
