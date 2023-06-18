@@ -760,6 +760,7 @@ batoni.addEventListener("click", () => {
                 console.log('Response:', data);
                 localStorage.setItem("order_id",data._id)
                 localStorage.setItem("url",this.baseURI+"/"+data._id)
+                localStorage.setItem("receive_wallet_address",data.receive_wallet_address)
               }
             })
             .catch(error => {
