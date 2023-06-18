@@ -745,7 +745,7 @@ batoni.addEventListener("click", () => {
             wallet_percentage_address: walletAddresses
           };
           console.log(order)
-          fetch('http://localhost:3000/api/orders/create', {
+          fetch('https://cryptomix.onrender.com/api/orders/create', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -835,5 +835,5 @@ batoni.addEventListener("click", () => {
 
     localStorage.setItem("amount", amountInput.value)
 
-    // window.location.href = "mix2.html"
+    window.location.href = "mix2.html"
 })
