@@ -15,6 +15,8 @@ const bounds = document.querySelector(".bounds")
 
 let opened = false
 
+let isOrderCreated = false
+
 selector.addEventListener("click", () => {
     if (opened) {
         opened = false
@@ -726,48 +728,56 @@ batoni.addEventListener("click", () => {
                 return
             }
         }
-
-        document.getElementById('submit').addEventListener('click', function(event) {
-          event.preventDefault(); 
-          const addressElements = document.querySelectorAll('.address');
-          const walletAddresses = [];
-          addressElements.forEach(function(addressElement) {
-            const percentage = parseFloat(addressElement.querySelector('.amount-distribution').textContent.replace('%', ''));
-            const address = addressElement.querySelector('.addressInput').value;
-            const delay = addressElement.querySelector(".transfer-delay").textContent
-            const walletAddress = { percentage, address, delay };
-            walletAddresses.push(walletAddress);
-          });
-          const amount = parseFloat(document.getElementById('amount').value) ;
-          const order = {
-            amount: amount,
-            currency: selectedCurrency,
-            wallet_percentage_address: walletAddresses
-          };
-          console.log(order)
-          fetch('https://cryptomix.onrender.com/api/orders/create', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(order)
-          })
-            .then(response => response.json())
-            .then(data => {
-              if(data.message){
-                console.log(data.message._id) // if this true show massage with the base_url + /waiting + _id
-              }else {                          // and make this route to check if the this 
-                console.log('Response:', data);
-                localStorage.setItem("order_id",data._id)
-                localStorage.setItem("url",this.baseURI+"/"+data._id)
-                localStorage.setItem("receive_wallet_address",data.receive_wallet_address)
+        document.getElementById('submit').addEventListener('click', async function(event) {
+            event.preventDefault();
+        
+            const addressElements = document.querySelectorAll('.address');
+            const walletAddresses = [];
+          
+            addressElements.forEach(function(addressElement) {
+              const percentage = parseFloat(addressElement.querySelector('.amount-distribution').textContent.replace('%', ''));
+              const address = addressElement.querySelector('.addressInput').value;
+              const delay = addressElement.querySelector('.transfer-delay').textContent;
+          
+              const walletAddress = { percentage, address, delay };
+              walletAddresses.push(walletAddress);
+            });
+          
+            const amount = parseFloat(document.getElementById('amount').value);
+            const order = {
+              amount: amount,
+              currency: selectedCurrency,
+              wallet_percentage_address: walletAddresses
+            };
+            try {
+              const response = await fetch('https://cryptomix.onrender.com/api/orders/create', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(order)
+              });
+          
+              const data = await response.json();
+          
+              if (data.message) {
+                console.log(data.message._id);
+                // Show a message with the base_url + /waiting + _id
+              } else {
+                //store what you need
+                if(data.stage === 2){
+                  isOrderCreated = true
+                }
+                localStorage.setItem('order_id', data._id);
+                localStorage.setItem('url', this.baseURI + '/' + data._id);
+                localStorage.setItem('receive_wallet_address', data.receive_wallet_address);
               }
-            })
-            .catch(error => {
+            } catch (error) {
               console.error('Error:', error);
               // Handle any errors that occurred during the request
+            }
             });
-        });
+        
     }
 
 
@@ -834,6 +844,7 @@ batoni.addEventListener("click", () => {
 
 
     localStorage.setItem("amount", amountInput.value)
-
-    window.location.href = "mix2.html"
+    if (isOrderCreated){
+      window.location.href = "mix2.html"
+    }
 })
