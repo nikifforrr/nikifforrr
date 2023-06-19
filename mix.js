@@ -1,43 +1,103 @@
-const pathname = window.location.pathname;
-processOrderRoute(pathname)
+const urlParams = new URLSearchParams(window.location.search);
+const orderId = urlParams.get('order_id');
 
-function processOrderRoute(pathname) {
-  const orderRoutePattern = /^\/order\/(.+)$/;
-  const isOrderRoute = orderRoutePattern.test(pathname);
-  if (!isOrderRoute) {
-    
-  } else {
-    const matchResult = pathname.match(orderRoutePattern);
-    if (!matchResult) {
-      
-    } else {
-      const orderId = matchResult[1];
-      const isValidIdFormat = /^[0-9a-fA-F]{24}$/.test(orderId);
+
+
+if(orderId){
+  processOrder(orderId)
+function processOrder(order_id) {
+      const isValidIdFormat = /^[0-9a-fA-F]{24}$/.test(order_id);
       if (!isValidIdFormat) {
         const errorMessage = 'Invalid Order ID format';
-        const errorUrl = `/error-order.html?error=${encodeURIComponent(errorMessage)}`;
+        const errorUrl = `http://localhost:4000/error-order.html?error=${encodeURIComponent(errorMessage)}`;
         window.location.href = errorUrl;
       } else {
         // Send a request to the server to fetch the order based on the ID
-        fetch(`https://cryptomix.onrender.com/api/orders/${orderId}`)
+        fetch(`https://cryptomix.onrender.com/api/orders/${order_id}`)
           .then(response => {
             if (response.ok) {
               return response.json();
             } else {
-              throw new Error('Error fetching order');
+              response.json().then((message)=>{
+                const errorUrl = `http://localhost:4000/error-order.html?error=${message.error}`;
+                window.location.href = errorUrl;
+              })
             }
           })
           .then(order => {
             localStorage.setItem("order_id",order._id) 
+            console.log(order)
             window.location.href = `mix${order.stage}.html`
           })
           .catch(error => {
-            console.error(error);
+            const errorUrl = `http://localhost:4000/error-order.html?error=${error}`;
+            window.location.href = errorUrl;
           });
       }
     }
-  }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    const waitingListId = urlParams.get('waiting_list_id');
+    if(waitingListId){
+      processWaitingList(waitingListId);
+    
+      function processWaitingList(waiting_list_id) {
+        const isValidIdFormat = /^[0-9a-fA-F]{24}$/.test(waiting_list_id);
+        if (!isValidIdFormat) {
+          const errorMessage = 'Invalid Waiting List ID format';
+          const errorUrl = `http://localhost:4000/error-waiting-list.html?error=${encodeURIComponent(errorMessage)}`;
+          window.location.href = errorUrl;
+        } else {
+          // Send a request to the server to fetch the waiting list based on the ID
+          fetch(`https://cryptomix.onrender.com/api/orders/waiting/${waiting_list_id}`)
+            .then(response => {
+              if (response.ok) {
+                return response.json();
+              } else {
+                response.json().then((message)=>{
+                  const errorUrl = `http://localhost:4000/error-waiting-list.html?error=${message.error}`;
+                  window.location.href = errorUrl;
+                })
+              }
+            })
+            .then(waitingList => {
+              localStorage.setItem("order_id", waitingList._id);
+              window.location.href = `mix${waitingList.stage}.html`
+            })
+            .catch(error => {
+              const errorUrl = `http://localhost:4000/error-waiting-list.html?error=${error}`;
+              window.location.href = errorUrl;
+            });
+        }
+      }
+    }
+
+    
+
+
+
+
+
+
+
+
+
 
 const selectedImg = document.querySelector(".selector>img:nth-child(1)")
 const selectedName = document.querySelector(".selector>div:nth-child(2)")
