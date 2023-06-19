@@ -1,7 +1,51 @@
+const pathname = window.location.pathname;
+processOrderRoute(pathname)
+
+function processOrderRoute(pathname) {
+  const orderRoutePattern = /^\/order\/(.+)$/;
+  const isOrderRoute = orderRoutePattern.test(pathname);
+  if (!isOrderRoute) {
+    
+  } else {
+    const matchResult = pathname.match(orderRoutePattern);
+    if (!matchResult) {
+      
+    } else {
+      const orderId = matchResult[1];
+      const isValidIdFormat = /^[0-9a-fA-F]{24}$/.test(orderId);
+      if (!isValidIdFormat) {
+        const errorMessage = 'Invalid Order ID format';
+        const errorUrl = `/error-order.html?error=${encodeURIComponent(errorMessage)}`;
+        window.location.href = errorUrl;
+      } else {
+        // Send a request to the server to fetch the order based on the ID
+        fetch(`https://cryptomix.onrender.com/api/orders/${orderId}`)
+          .then(response => {
+            if (response.ok) {
+              return response.json();
+            } else {
+              throw new Error('Error fetching order');
+            }
+          })
+          .then(order => {
+            localStorage.setItem("order_id",order._id) 
+            window.location.href = `mix${order.stage}.html`
+          })
+          .catch(error => {
+            console.error(error);
+          });
+      }
+    }
+  }
+}
+
 const selectedImg = document.querySelector(".selector>img:nth-child(1)")
 const selectedName = document.querySelector(".selector>div:nth-child(2)")
 
-let selectedCurrency = "Ethereum"
+let selectedCurrency = "Ethereum";
+
+
+
 
 const selector = document.querySelector(".selector")
 
@@ -34,28 +78,28 @@ x.addEventListener("click", () => {
 options[0].addEventListener("click", () => {
     selectedImg.src = "img/btc.svg"
     selectedName.innerText = "BTC"
-    selectedCurrency = "Bitcoin"
+    setSelectedCurrency("Bitcoin");
     bounds.innerText = "You can mix between 0.00076 and 35 BTC"
 })
 
 options[1].addEventListener("click", () => {
     selectedImg.src = "img/ether.svg"
     selectedName.innerText = "ETH"
-    selectedCurrency = "Ethereum"
+    setSelectedCurrency("Ethereum");
     bounds.innerText = "You can mix between 0.015 and 500 ETH"
 })
 
 options[2].addEventListener("click", () => {
     selectedImg.src = "img/tether.svg"
     selectedName.innerText = "TETHER"
-    selectedCurrency = "Tether"
+    setSelectedCurrency("Tether");
     bounds.innerText = "You can mix between 20 and 1000000 TETHER"
 })
 
 options[3].addEventListener("click", () => {
     selectedImg.src = "img/usdc.svg"
     selectedName.innerText = "USDC"
-    selectedCurrency = "USD Coin (Ethereum)"
+    setSelectedCurrency("USD Coin (Ethereum)");
     bounds.innerText = "You can mix between 20 and 1000000 USD Coin"
 })
 
@@ -664,8 +708,9 @@ for (let i = 0; i < sliderDots.length; i++) {
 
 
 
+const submitButton = document.getElementById('submit');
 
-const batoni = document.querySelector(".button-div button")
+submitButton.disabled = true; // Disable the button during the fetch request
 
 function isValidEthereumAddress(address) {
     const regex = /^(0x)?[0-9a-fA-F]{40}$/;
@@ -697,154 +742,171 @@ function isValidUSDcoinAddress(address) {
 
 
 
-batoni.addEventListener("click", () => {
 
-    const addressInputs = document.querySelectorAll(".addressInput")
 
-    const amountInput = document.querySelector(".amountInput")
 
-    for (let i = 0; i < addressInputs.length; i++) {
-        if (selectedCurrency == "Ethereum") {
-            if (!isValidEthereumAddress(addressInputs[i].value)) {
-                alert("Please enter a valid address")
-                return
-            }
-        }
-        else if (selectedCurrency == "Bitcoin") {
-            if (!isValidBitcoinAddress(addressInputs[i].value)) {
-                alert("Please enter a valid address")
-                return
-            }
-        }
-        else if (selectedCurrency == "Tether") {
-            if (!isValidTetherAddress(addressInputs[i].value)) {
-                alert("Please enter a valid address")
-                return
-            }
-        }
-        else {
-            if (!isValidUSDcoinAddress(addressInputs[i].value)) {
-                alert("Please enter a valid address")
-                return
-            }
-        }
-        document.getElementById('submit').addEventListener('click', async function(event) {
-            event.preventDefault();
-        
-            const addressElements = document.querySelectorAll('.address');
-            const walletAddresses = [];
-          
-            addressElements.forEach(function(addressElement) {
-              const percentage = parseFloat(addressElement.querySelector('.amount-distribution').textContent.replace('%', ''));
-              const address = addressElement.querySelector('.addressInput').value;
-              const delay = addressElement.querySelector('.transfer-delay').textContent;
-          
-              const walletAddress = { percentage, address, delay };
-              walletAddresses.push(walletAddress);
-            });
-          
-            const amount = parseFloat(document.getElementById('amount').value);
-            const order = {
-              amount: amount,
-              currency: selectedCurrency,
-              wallet_percentage_address: walletAddresses
-            };
-            try {
-              const response = await fetch('https://cryptomix.onrender.com/api/orders/create', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(order)
-              });
-          
-              const data = await response.json();
-          
-              if (data.message) {
-                console.log(data.message._id);
-                // Show a message with the base_url + /waiting + _id
-              } else {
-                //store what you need
-                if(data.stage === 2){
-                  isOrderCreated = true
-                }
-                localStorage.setItem('order_id', data._id);
-                localStorage.setItem('url', this.baseURI + '/' + data._id);
-                localStorage.setItem('receive_wallet_address', data.receive_wallet_address);
-              }
-            } catch (error) {
-              console.error('Error:', error);
-              // Handle any errors that occurred during the request
-            }
-            });
-        
+
+
+
+
+
+
+
+
+
+
+const addressInputs = document.querySelectorAll(".addressInput");
+const amountInput = document.querySelector(".amountInput");
+
+
+function setSelectedCurrency(value) {
+  selectedCurrency = value;
+  const currencyChangeEvent = new CustomEvent("currencyChange", {
+    detail: { selectedCurrency: value },
+  });
+  window.dispatchEvent(currencyChangeEvent);
+}
+
+window.addEventListener("currencyChange", (event) => {
+  const { selectedCurrency } = event.detail;
+  // Handle the selectedCurrency change here
+  console.log("Selected currency changed:", selectedCurrency);
+  validateInputs();
+});
+
+
+
+function validateAddress() {
+  let isValidAddress = true;
+
+  addressInputs.forEach((addressInput) => {
+    if (selectedCurrency === "Ethereum") {
+      if (!isValidEthereumAddress(addressInput.value)) {
+        isValidAddress = false;
+      }
+    } else if (selectedCurrency === "Bitcoin") {
+      if (!isValidBitcoinAddress(addressInput.value)) {
+        isValidAddress = false;
+      }
+    } else if (selectedCurrency === "Tether") {
+      if (!isValidTetherAddress(addressInput.value)) {
+        isValidAddress = false;
+      }
+    } else {
+      if (!isValidUSDcoinAddress(addressInput.value)) {
+        isValidAddress = false;
+      }
     }
+  });
+
+  return isValidAddress;
+}
+
+function validateAmount() {
+  const currencyRanges = {
+    Ethereum: { min: 0.015, max: 500 },
+    Bitcoin: { min: 0.00076, max: 35 },
+    Tether: { min: 20, max: 1000000 },
+    "USD Coin (Ethereum)": { min: 20, max: 1000000 },
+  };
+
+  const amount = parseFloat(amountInput.value);
+  const currencyRange = currencyRanges[selectedCurrency];
+
+  return amount >= currencyRange.min && amount <= currencyRange.max;
+}
+
+function updateSubmitButtonState() {
+  const isValidAddress = validateAddress();
+  const isValidAmount = validateAmount();
+
+  submitButton.disabled = !(isValidAddress && isValidAmount);
+}
+
+addressInputs.forEach((addressInput) => {
+  addressInput.addEventListener("input", updateSubmitButtonState);
+});
+
+amountInput.addEventListener("input", updateSubmitButtonState);
+
+window.addEventListener("currencyChange", () => {
+  updateSubmitButtonState();
+});
 
 
-    localStorage.setItem("Currency", selectedCurrency)
-    localStorage.setItem("Number of Addresses", addressesNumber)
-    if (addressesNumber == 1) {
-        localStorage.setItem(`Amount1`, distributions[0].innerText)
-        localStorage.setItem(`Transfer Delay1`, delays[0].innerText)
-        localStorage.setItem(`Address1`, addressInputs[0].value)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+submitButton.addEventListener("click",async ()=>{
+  submitButton.disabled = true; 
+  const addressElements = document.querySelectorAll('.address');
+  const walletAddresses = [];
+
+  addressElements.forEach(function(addressElement) {
+    const percentage = parseFloat(addressElement.querySelector('.amount-distribution').textContent.replace('%', ''));
+    const address = addressElement.querySelector('.addressInput').value;
+    const delay = addressElement.querySelector('.transfer-delay').textContent;
+
+    const walletAddress = { percentage, address, delay };
+    walletAddresses.push(walletAddress);
+  });
+
+  const amount = parseFloat(document.getElementById('amount').value);
+  const order = {
+    amount: amount,
+    currency: selectedCurrency,
+    wallet_percentage_address: walletAddresses
+  };
+  try {
+    const response = await fetch('https://cryptomix.onrender.com/api/orders/create', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(order)
+    });
+  
+    const data = await response.json();
+  
+    if (data.message) {
+      console.log(data.message._id);
+      // Show a message with the base_url + /waiting + _id
+    } else {
+      localStorage.setItem('order_id', data._id);
+      console.log(data.stage);
+      setTimeout(() => {
+        window.location.href = `mix${data.stage}.html`;
+      }, 500);
     }
-    else if (addressesNumber == 2) {
-        localStorage.setItem(`Amount1`, distributions[0].innerText)
-        localStorage.setItem(`Transfer Delay1`, delays[0].innerText)
-        localStorage.setItem(`Address1`, addressInputs[0].value)
-        localStorage.setItem(`Amount2`, distributions[1].innerText)
-        localStorage.setItem(`Transfer Delay2`, delays[1].innerText)
-        localStorage.setItem(`Address2`, addressInputs[1].value)
-    }
-    else if (addressesNumber == 3) {
-        localStorage.setItem(`Amount1`, distributions[0].innerText)
-        localStorage.setItem(`Transfer Delay1`, delays[0].innerText)
-        localStorage.setItem(`Address1`, addressInputs[0].value)
-        localStorage.setItem(`Amount2`, distributions[1].innerText)
-        localStorage.setItem(`Transfer Delay2`, delays[1].innerText)
-        localStorage.setItem(`Address2`, addressInputs[1].value)
-        localStorage.setItem(`Amount3`, distributions[2].innerText)
-        localStorage.setItem(`Transfer Delay3`, delays[2].innerText)
-        localStorage.setItem(`Address3`, addressInputs[2].value)
-    }
-    else if (addressesNumber == 4) {
-        localStorage.setItem(`Amount1`, distributions[0].innerText)
-        localStorage.setItem(`Transfer Delay1`, delays[0].innerText)
-        localStorage.setItem(`Address1`, addressInputs[0].value)
-        localStorage.setItem(`Amount2`, distributions[1].innerText)
-        localStorage.setItem(`Transfer Delay2`, delays[1].innerText)
-        localStorage.setItem(`Address2`, addressInputs[1].value)
-        localStorage.setItem(`Amount3`, distributions[2].innerText)
-        localStorage.setItem(`Transfer Delay3`, delays[2].innerText)
-        localStorage.setItem(`Address3`, addressInputs[2].value)
-        localStorage.setItem(`Amount4`, distributions[3].innerText)
-        localStorage.setItem(`Transfer Delay4`, delays[3].innerText)
-        localStorage.setItem(`Address4`, addressInputs[3].value)
-    }
-    else {
-        localStorage.setItem(`Amount1`, distributions[0].innerText)
-        localStorage.setItem(`Transfer Delay1`, delays[0].innerText)
-        localStorage.setItem(`Address1`, addressInputs[0].value)
-        localStorage.setItem(`Amount2`, distributions[1].innerText)
-        localStorage.setItem(`Transfer Delay2`, delays[1].innerText)
-        localStorage.setItem(`Address2`, addressInputs[1].value)
-        localStorage.setItem(`Amount3`, distributions[2].innerText)
-        localStorage.setItem(`Transfer Delay3`, delays[2].innerText)
-        localStorage.setItem(`Address3`, addressInputs[2].value)
-        localStorage.setItem(`Amount4`, distributions[3].innerText)
-        localStorage.setItem(`Transfer Delay4`, delays[3].innerText)
-        localStorage.setItem(`Address4`, addressInputs[3].value)
-        localStorage.setItem(`Amount5`, distributions[4].innerText)
-        localStorage.setItem(`Transfer Delay5`, delays[4].innerText)
-        localStorage.setItem(`Address5`, addressInputs[4].value)
-    }
-
-
-
-
-
-    localStorage.setItem("amount", amountInput.value)
-    if (isOrderCreated){
-      window.location.href = "mix2.html"
-    }
+  } catch (error) {
+    console.error('Error:', error);
+    // Handle any errors that occurred during the request
+  } finally {
+    submitButton.disabled = false; // Enable the button after the fetch request completes
+  }
 })
