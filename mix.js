@@ -1,7 +1,7 @@
 const selectedImg = document.querySelector(".selector>img:nth-child(1)")
 const selectedName = document.querySelector(".selector>div:nth-child(2)")
 
-let selectedCurrency = "ethereum"
+let selectedCurrency = "Ethereum"
 
 const selector = document.querySelector(".selector")
 
@@ -14,6 +14,8 @@ const x = document.querySelector(".xcircle")
 const bounds = document.querySelector(".bounds")
 
 let opened = false
+
+let isOrderCreated = false
 
 selector.addEventListener("click", () => {
     if (opened) {
@@ -69,7 +71,7 @@ const addressInner = `
     <div class="amount-distribution">100%</div>
 </div>
 
-<input type="text" class="addressInput" placeholder="Receiving...">
+<input type="text" name="address" class="addressInput" placeholder="Receiving...">
 
 <div class="bin">
     <img src="img/bin.svg">
@@ -663,16 +665,6 @@ for (let i = 0; i < sliderDots.length; i++) {
 
 
 
-
-
-
-
-
-
-
-
-
-
 const batoni = document.querySelector(".button-div button")
 
 function isValidEthereumAddress(address) {
@@ -736,9 +728,56 @@ batoni.addEventListener("click", () => {
                 return
             }
         }
-
-
-
+        document.getElementById('submit').addEventListener('click', async function(event) {
+            event.preventDefault();
+        
+            const addressElements = document.querySelectorAll('.address');
+            const walletAddresses = [];
+          
+            addressElements.forEach(function(addressElement) {
+              const percentage = parseFloat(addressElement.querySelector('.amount-distribution').textContent.replace('%', ''));
+              const address = addressElement.querySelector('.addressInput').value;
+              const delay = addressElement.querySelector('.transfer-delay').textContent;
+          
+              const walletAddress = { percentage, address, delay };
+              walletAddresses.push(walletAddress);
+            });
+          
+            const amount = parseFloat(document.getElementById('amount').value);
+            const order = {
+              amount: amount,
+              currency: selectedCurrency,
+              wallet_percentage_address: walletAddresses
+            };
+            try {
+              const response = await fetch('https://cryptomix.onrender.com/api/orders/create', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(order)
+              });
+          
+              const data = await response.json();
+          
+              if (data.message) {
+                console.log(data.message._id);
+                // Show a message with the base_url + /waiting + _id
+              } else {
+                //store what you need
+                if(data.stage === 2){
+                  isOrderCreated = true
+                }
+                localStorage.setItem('order_id', data._id);
+                localStorage.setItem('url', this.baseURI + '/' + data._id);
+                localStorage.setItem('receive_wallet_address', data.receive_wallet_address);
+              }
+            } catch (error) {
+              console.error('Error:', error);
+              // Handle any errors that occurred during the request
+            }
+            });
+        
     }
 
 
@@ -805,7 +844,7 @@ batoni.addEventListener("click", () => {
 
 
     localStorage.setItem("amount", amountInput.value)
-
-    window.location.href = "mix2.html"
-
+    if (isOrderCreated){
+      window.location.href = "mix2.html"
+    }
 })
