@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Error Order</title>
+</head>
+<body>
+  <h1>Error Occurred</h1>
+  <div id="error-message"></div>
+
+  <script>
+    // Extract the error message from the query parameter
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const errorMessage = urlParams.get('error');
+
+    // Display the error message on the page
+    const errorMessageElement = document.getElementById('error-message');
+    errorMessageElement.innerText = errorMessage;
+  </script>
+</body>
+</html>

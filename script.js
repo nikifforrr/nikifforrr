@@ -1,3 +1,10 @@
+
+
+
+
+
+
+
 const questions = document.querySelectorAll(".question")
 const arrows = document.querySelectorAll(".question1 div img")
 const expanditures = document.querySelectorAll(".question2")
@@ -73,3 +80,4 @@ const names = ["Luna", "Aiden", "Scarlett", "Leo", "Jacob", "Colton", "Jade", "T
 generateBtn.addEventListener("click", ()=>{
     nameInput.value = names[Math.floor(Math.random()*10)]
 })
+
