@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Mix_Guru Chat</title>
+  <title>Mix Guru Chat</title>
   <link rel="stylesheet" href="chat.css">
 </head>
 <body>
-  <h1>Mix_Guru Chat</h1>
+  <h1>Mix Guru Chat</h1>
 
   <button style="display: none;" id="createBtn">Create Chat Room</button>
   <label style="display: none;" for="chatRoomId">Chat Room ID:</label>
@@ -23,8 +23,8 @@
   </div>
 
 <script>
-    // Get the query parameters from the URL
-    const urlParams = new URLSearchParams(window.location.search);
+  // Get the query parameters from the URL
+  const urlParams = new URLSearchParams(window.location.search);
 
     // Retrieve the values of the query parameters
     const subject = urlParams.get('subject');
@@ -48,9 +48,12 @@
     socket.addEventListener('open', () => {
       createChatRoom();
     });
-
+    window.addEventListener('unload', () => {
+      socket.close();
+    });
     // Handle connection close
     socket.addEventListener('close', () => {
+      socket.close();
     });
 
     // Function to create a new chat room
