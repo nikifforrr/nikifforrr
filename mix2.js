@@ -98,6 +98,7 @@ batoni.addEventListener("click", ()=>{
             return
         }
     }
+    loadingSpinner()
     fetch(`https://cryptomix.onrender.com/api/orders/approve/${orderId}`, {
       method: 'PUT',
     })
@@ -111,6 +112,8 @@ batoni.addEventListener("click", ()=>{
       })
       .catch(error => {
         console.error(error);
-      });
+      }).finally(()=>{
+        hideLoadingSpinner()
+      })
     
 })

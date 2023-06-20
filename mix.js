@@ -137,7 +137,7 @@ function processOrder(order_id) {
 const order_id = localStorage.getItem("order_id")
 if(order_id){
     showLoadingSpinner()
-    fetch(`https://cryptomix.onrender.com/api/orders/${orderId}`)
+    fetch(`https://cryptomix.onrender.com/api/orders/${order_id}`)
     .then(response => {
       if (response.ok) {
         return response.json();
