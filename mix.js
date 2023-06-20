@@ -1,43 +1,208 @@
-const pathname = window.location.pathname;
-processOrderRoute(pathname)
 
-function processOrderRoute(pathname) {
-  const orderRoutePattern = /^\/order\/(.+)$/;
-  const isOrderRoute = orderRoutePattern.test(pathname);
-  if (!isOrderRoute) {
-    
-  } else {
-    const matchResult = pathname.match(orderRoutePattern);
-    if (!matchResult) {
-      
-    } else {
-      const orderId = matchResult[1];
-      const isValidIdFormat = /^[0-9a-fA-F]{24}$/.test(orderId);
+
+
+
+const loadingSpinner = `
+  <div class="loading-spinner-overlay">
+    <div class="loading-spinner"></div>
+  </div>
+`;
+
+
+
+function showLoadingSpinner() {
+  const spinnerElement = document.createElement('div');
+  spinnerElement.innerHTML = loadingSpinner;
+
+  const overlayElement = document.createElement('div');
+  overlayElement.classList.add('loading-overlay');
+
+  document.body.appendChild(overlayElement);
+  document.body.appendChild(spinnerElement);
+  document.body.style.overflow = 'hidden';
+}
+
+function hideLoadingSpinner() {
+  const spinnerElement = document.querySelector('.loading-spinner-overlay');
+  const overlayElement = document.querySelector('.loading-overlay');
+  if (spinnerElement && overlayElement) {
+    spinnerElement.parentNode.removeChild(spinnerElement);
+    overlayElement.parentNode.removeChild(overlayElement);
+    document.body.style.overflow = 'auto';
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+const urlParams = new URLSearchParams(window.location.search);
+const orderId = urlParams.get('order_id');
+
+
+
+if(orderId){
+  processOrder(orderId)
+function processOrder(order_id) {
+      const isValidIdFormat = /^[0-9a-fA-F]{24}$/.test(order_id);
       if (!isValidIdFormat) {
         const errorMessage = 'Invalid Order ID format';
-        const errorUrl = `/error-order.html?error=${encodeURIComponent(errorMessage)}`;
+        const errorUrl = `http://127.0.0.1:5500/error-order.html?error=${encodeURIComponent(errorMessage)}`;
         window.location.href = errorUrl;
       } else {
+        showLoadingSpinner()
         // Send a request to the server to fetch the order based on the ID
-        fetch(`https://cryptomix.onrender.com/api/orders/${orderId}`)
+        fetch(`https://cryptomix.onrender.com/api/orders/${order_id}`)
           .then(response => {
             if (response.ok) {
               return response.json();
             } else {
-              throw new Error('Error fetching order');
+              response.json().then((message)=>{
+                const errorUrl = `http://127.0.0.1:5500/error-order.html?error=${message.error}`;
+                window.location.href = errorUrl;
+              })
             }
           })
           .then(order => {
             localStorage.setItem("order_id",order._id) 
+            console.log(order)
             window.location.href = `mix${order.stage}.html`
           })
           .catch(error => {
-            console.error(error);
-          });
+            const errorUrl = `http://127.0.0.1:5500/error-order.html?error=${error}`;
+            window.location.href = errorUrl;
+          }).finally(()=>{
+            hideLoadingSpinner()
+          })
       }
     }
-  }
+}else {
+        
+    const waitingListId = urlParams.get('waiting_list_id');
+    if(waitingListId){
+      processWaitingList(waitingListId);
+    
+      function processWaitingList(waiting_list_id) {
+        const isValidIdFormat = /^[0-9a-fA-F]{24}$/.test(waiting_list_id);
+        if (!isValidIdFormat) {
+          const errorMessage = 'Invalid Waiting List ID format';
+          const errorUrl = `http://127.0.0.1:5500/error-waiting-list.html?error=${encodeURIComponent(errorMessage)}`;
+          window.location.href = errorUrl;
+        } else {
+          // Send a request to the server to fetch the waiting list based on the ID
+          showLoadingSpinner()
+          fetch(`https://cryptomix.onrender.com/api/orders/waiting/${waiting_list_id}`)
+            .then(response => {
+              if (response.ok) {
+                return response.json();
+              } else {
+                response.json().then((message)=>{
+                  const errorUrl = `http://127.0.0.1:5500/error-waiting-list.html?error=${message.error}`;
+                  window.location.href = errorUrl;
+                })
+              }
+            })
+            .then(waitingList => {
+              localStorage.setItem("order_id", waitingList._id);
+              window.location.href = `mix${waitingList.stage}.html`
+            })
+            .catch(error => {
+              const errorUrl = `http://127.0.0.1:5500/error-waiting-list.html?error=${error}`;
+              window.location.href = errorUrl;
+            }).finally(()=>{
+              hideLoadingSpinner()
+            })
+        }
+      }
+    }
 }
+
+
+
+
+
+
+
+
+
+
+const order_id = localStorage.getItem("order_id")
+if(order_id){
+    showLoadingSpinner()
+    fetch(`https://cryptomix.onrender.com/api/orders/${order_id}`)
+    .then(response => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error('Error fetching order');
+      }
+    })
+    .then(order => {
+        // Redirect to the appropriate page based on the stage
+        window.location.href = `mix${order.stage}.html`;
+    })
+    .catch(error => {
+      console.error(error);
+    }).finally(()=>{
+      hideLoadingSpinner()
+    })
+}else{
+
+
+  const waiting_list_id = localStorage.getItem("waiting_list_id")
+  if(waiting_list_id){
+      showLoadingSpinner()
+      fetch(`https://cryptomix.onrender.com/api/orders/${waiting_list_id}`)
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error('Error fetching order');
+        }
+      })
+      .then(order => {
+          // Redirect to the appropriate page based on the stage
+          localStorage.removeItem("waiting_list_id");
+          localStorage.setItem("order_id",order._id)
+          window.location.href = `mix${order.stage}.html`;
+      })
+      .catch(error => {
+        console.error(error);
+      }).finally(()=>{
+        hideLoadingSpinner()
+      })
+  }
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
 
 const selectedImg = document.querySelector(".selector>img:nth-child(1)")
 const selectedName = document.querySelector(".selector>div:nth-child(2)")
@@ -773,7 +938,10 @@ window.addEventListener("currencyChange", (event) => {
   console.log("Selected currency changed:", selectedCurrency);
   validateInputs();
 });
-
+function validateInputs(){
+  validateAddress()
+  validateAmount()
+}
 
 
 function validateAddress() {
@@ -785,6 +953,7 @@ function validateAddress() {
         isValidAddress = false;
       }
     } else if (selectedCurrency === "Bitcoin") {
+      console.log("Bitcoin",!isValidBitcoinAddress(addressInput.value))
       if (!isValidBitcoinAddress(addressInput.value)) {
         isValidAddress = false;
       }
@@ -812,7 +981,6 @@ function validateAmount() {
 
   const amount = parseFloat(amountInput.value);
   const currencyRange = currencyRanges[selectedCurrency];
-
   return amount >= currencyRange.min && amount <= currencyRange.max;
 }
 
@@ -842,10 +1010,48 @@ window.addEventListener("currencyChange", () => {
 
 
 
+const dialogTemplate = `
+<dialog id="myDialog">
+  <div id="dialogContent">
+    <input type="text" id="urlInput" readonly>
+    <button id="copyBtn">Copy</button>
+    <p id="message">Sample Message</p>
+    <button id="exitDialogBtn">Exit</button>
+  </div>
+</dialog>`;
 
+// Show the dialog
+function showDialog(url, message) {
+  const dialogContainer = document.createElement('div');
+  dialogContainer.innerHTML = dialogTemplate;
 
+  // Append the dialog to the document body
+  document.body.appendChild(dialogContainer);
 
+  const dialog = document.getElementById('myDialog');
+  const urlInput = document.getElementById('urlInput');
+  const copyButton = document.getElementById('copyBtn');
+  const messageText = document.getElementById('message');
+  const exitDialogButton = document.getElementById('exitDialogBtn');
 
+  urlInput.value = url;
+  messageText.textContent = message;
+
+  // Copy button functionality
+  copyButton.addEventListener('click', () => {
+    urlInput.select();
+    document.execCommand('copy');
+  });
+
+  dialog.showModal();
+  exitDialogButton.addEventListener('click', hideDialog);
+}
+
+// Hide the dialog
+function hideDialog() {
+  const dialog = document.getElementById('myDialog');
+  dialog.close();
+}
 
 
 
@@ -864,6 +1070,7 @@ window.addEventListener("currencyChange", () => {
 
 submitButton.addEventListener("click",async ()=>{
   submitButton.disabled = true; 
+  showLoadingSpinner()
   const addressElements = document.querySelectorAll('.address');
   const walletAddresses = [];
 
@@ -894,19 +1101,20 @@ submitButton.addEventListener("click",async ()=>{
     const data = await response.json();
   
     if (data.message) {
-      console.log(data.message._id);
-      // Show a message with the base_url + /waiting + _id
+      const baseUrl = 'https://example.com';
+      const waitingId = data.message._id;
+      const url = `${baseUrl}?waiting=${waitingId}`;
+      localStorage.setItem('waiting_list_id', waitingId);
+      showDialog(url,"hi");
     } else {
       localStorage.setItem('order_id', data._id);
-      console.log(data.stage);
-      setTimeout(() => {
-        window.location.href = `mix${data.stage}.html`;
-      }, 500);
+      window.location.href = `mix${data.stage}.html`;
     }
   } catch (error) {
     console.error('Error:', error);
     // Handle any errors that occurred during the request
   } finally {
     submitButton.disabled = false; // Enable the button after the fetch request completes
+    hideLoadingSpinner()
   }
 })
