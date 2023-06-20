@@ -25,7 +25,7 @@ async function checkOrderStage() {
     }
 
     idInput.value = orderId;
-    urlInput.value = `http://localhost:4000/mix.html?order_id=${order._id}`; // need to change 
+    urlInput.value = `http://127.0.0.1:5500/mix.html?order_id=${order._id}`; // need to change 
     addressInput.value = order.receive_wallet_address;
     howMuch.innerText = `${order.amount} ${order.currency}`
 
