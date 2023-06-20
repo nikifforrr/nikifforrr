@@ -2,102 +2,7 @@
 <html>
 <head>
   <title>Mix_Guru Chat</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      background-color: #f5f5f5;
-    }
-
-    #chatContainer {
-      width: 400px;
-      height: 600px;
-      border-radius: 10px;
-      background-color: #fff;
-      overflow-y: scroll;
-    }
-
-    #messagesList {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      overflow-y: auto;
-    }
-
-    .messageBubble {
-      display: flex;
-      align-items: center;
-      margin: 10px;
-    }
-
-    .messageBubble.sender {
-      justify-content: flex-end;
-    }
-
-    .messageBubble.receiver {
-      justify-content: flex-start;
-    }
-
-    .messageBubble p {
-      max-width: 80%;
-      padding: 10px;
-      border-radius: 20px;
-      background-color: #e2e2e2;
-      margin: 0;
-      word-wrap: break-word;
-    }
-
-    #inputContainer {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-top: 10px;
-    }
-
-    #messageInput {
-      width: 250px;
-      padding: 10px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-
-    #sendBtn {
-      margin-left: 10px;
-      padding: 10px 20px;
-      border-radius: 5px;
-      background-color: #4caf50;
-      color: #fff;
-      border: none;
-      cursor: pointer;
-    }
-
-    .messageBubble.sender p {
-      background-color: #DCF8C6;
-      align-self: flex-end;
-      color: #000; /* Change sender text color */
-    }
-
-    .messageBubble.receiver p {
-      background-color: #E2E2E2;
-      align-self: flex-start;
-      color: #000; /* Change receiver text color */
-    }
-    
-    .receiverMessageContainer {
-    display: flex;
-    justify-content: flex-end;
-    }
-
-  .senderMessageContainer {
-    display: flex;
-    justify-content: flex-start;
-  }
-  </style>
+  <link rel="stylesheet" href="chat.css">
 </head>
 <body>
   <h1>Mix_Guru Chat</h1>
@@ -301,8 +206,13 @@
       console.log('Error updating chat history:', error);
     });
 }
-
+  messageInput.addEventListener('keyup', (event) => {
+    if (event.key === 'Enter') {
+      sendBtn.click(); // Trigger click event on the send button
+    }
+  });
 
   </script>
+  
 </body>
 </html>
