@@ -120,17 +120,32 @@ fetch('https://cryptomix.onrender.com/api/orders')
       const stageElement = orderElement.querySelector('#stage');
 
       advanceButton.addEventListener('click', () => {
-        fetch(`https://cryptomix.onrender.com/api/orders/admin-approve/${orderIdElement.textContent}`)
-        .then(response => {
-          if (response.ok) {
-            stageElement.innerText = parseInt(stageElement.textContent) + 1
-            return response.json();
-          } else {
-            response.json().then((response)=>{
-              console.error(response)
-            })
+        const token = 'your_auth_token';
+
+        fetch(`https://cryptomix.onrender.com/api/orders/admin-approve/${orderIdElement.textContent}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
           }
         })
+          .then(response => {
+            if (response.ok) {
+              stageElement.innerText = parseInt(stageElement.textContent) + 1;
+              return response.json();
+            } else {
+              return response.json().then(error => {
+                console.error(error);
+              });
+            }
+          })
+          .then(data => {
+            // Handle the response data
+            console.log(data);
+          })
+          .catch(error => {
+            console.error(error);
+          });
       });
     });
   })
