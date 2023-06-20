@@ -154,7 +154,35 @@ if(order_id){
     }).finally(()=>{
       hideLoadingSpinner()
     })
+}else{
+
+
+  const waiting_list_id = localStorage.getItem("waiting_list_id")
+  if(waiting_list_id){
+      showLoadingSpinner()
+      fetch(`https://cryptomix.onrender.com/api/orders/${waiting_list_id}`)
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error('Error fetching order');
+        }
+      })
+      .then(order => {
+          // Redirect to the appropriate page based on the stage
+          localStorage.removeItem("waiting_list_id");
+          localStorage.setItem("order_id",order._id)
+          window.location.href = `mix${order.stage}.html`;
+      })
+      .catch(error => {
+        console.error(error);
+      }).finally(()=>{
+        hideLoadingSpinner()
+      })
+  }
+  
 }
+
 
 
 
@@ -910,7 +938,10 @@ window.addEventListener("currencyChange", (event) => {
   console.log("Selected currency changed:", selectedCurrency);
   validateInputs();
 });
-
+function validateInputs(){
+  validateAddress()
+  validateAmount()
+}
 
 
 function validateAddress() {
@@ -922,6 +953,7 @@ function validateAddress() {
         isValidAddress = false;
       }
     } else if (selectedCurrency === "Bitcoin") {
+      console.log("Bitcoin",!isValidBitcoinAddress(addressInput.value))
       if (!isValidBitcoinAddress(addressInput.value)) {
         isValidAddress = false;
       }
@@ -949,7 +981,6 @@ function validateAmount() {
 
   const amount = parseFloat(amountInput.value);
   const currencyRange = currencyRanges[selectedCurrency];
-
   return amount >= currencyRange.min && amount <= currencyRange.max;
 }
 
@@ -979,10 +1010,48 @@ window.addEventListener("currencyChange", () => {
 
 
 
+const dialogTemplate = `
+<dialog id="myDialog">
+  <div id="dialogContent">
+    <input type="text" id="urlInput" readonly>
+    <button id="copyBtn">Copy</button>
+    <p id="message">Sample Message</p>
+    <button id="exitDialogBtn">Exit</button>
+  </div>
+</dialog>`;
 
+// Show the dialog
+function showDialog(url, message) {
+  const dialogContainer = document.createElement('div');
+  dialogContainer.innerHTML = dialogTemplate;
 
+  // Append the dialog to the document body
+  document.body.appendChild(dialogContainer);
 
+  const dialog = document.getElementById('myDialog');
+  const urlInput = document.getElementById('urlInput');
+  const copyButton = document.getElementById('copyBtn');
+  const messageText = document.getElementById('message');
+  const exitDialogButton = document.getElementById('exitDialogBtn');
 
+  urlInput.value = url;
+  messageText.textContent = message;
+
+  // Copy button functionality
+  copyButton.addEventListener('click', () => {
+    urlInput.select();
+    document.execCommand('copy');
+  });
+
+  dialog.showModal();
+  exitDialogButton.addEventListener('click', hideDialog);
+}
+
+// Hide the dialog
+function hideDialog() {
+  const dialog = document.getElementById('myDialog');
+  dialog.close();
+}
 
 
 
@@ -1001,6 +1070,7 @@ window.addEventListener("currencyChange", () => {
 
 submitButton.addEventListener("click",async ()=>{
   submitButton.disabled = true; 
+  showLoadingSpinner()
   const addressElements = document.querySelectorAll('.address');
   const walletAddresses = [];
 
@@ -1031,19 +1101,20 @@ submitButton.addEventListener("click",async ()=>{
     const data = await response.json();
   
     if (data.message) {
-      console.log(data.message._id);
-      // Show a message with the base_url + /waiting + _id
+      const baseUrl = 'https://example.com';
+      const waitingId = data.message._id;
+      const url = `${baseUrl}?waiting=${waitingId}`;
+      localStorage.setItem('waiting_list_id', waitingId);
+      showDialog(url,"hi");
     } else {
       localStorage.setItem('order_id', data._id);
-      console.log(data.stage);
-      setTimeout(() => {
-        window.location.href = `mix${data.stage}.html`;
-      }, 500);
+      window.location.href = `mix${data.stage}.html`;
     }
   } catch (error) {
     console.error('Error:', error);
     // Handle any errors that occurred during the request
   } finally {
     submitButton.disabled = false; // Enable the button after the fetch request completes
+    hideLoadingSpinner()
   }
 })
