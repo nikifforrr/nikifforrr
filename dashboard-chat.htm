@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat Application</title>
+  <style>
+    /* CSS styles for the chat application */
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .chat-room {
+      margin-bottom: 20px;
+    }
+
+    .chat-messages {
+      border: 1px solid #ccc;
+      padding: 20px;
+    }
+
+    .input-area {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Chat Application</h1>
+    <div class="chat-room">
+      <h2>Join a Chat Room</h2>
+      <div>
+        <input type="text" id="roomIdInput" placeholder="Enter Room ID">
+        <button id="joinBtn">Join Room</button>
+      </div>
+    </div>
+    <div class="chat-messages">
+      <h2>Chat Room</h2>
+      <ul id="messagesList"></ul>
+      <div class="input-area">
+        <input type="text" id="messageInput" placeholder="Type your message">
+        <button id="sendBtn">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="./script.js"> //import WebSocket
+  
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const socket = new WebSocket('ws://cryptomix.onrender.com');
+      let roomId = null;
+
+      socket.addEventListener('open', () => {
+        console.log('Connected to WebSocket server');
+        // Connection is established, you can perform additional actions here
+      });
+
+      socket.addEventListener('close', () => {
+        console.log('Disconnected from WebSocket server');
+        // Connection is closed, you can handle this event if needed
+      });
+
+      socket.addEventListener('message', (event) => {
+        console.log('Received message:', event.data);
+
+        try {
+          let message;
+          if (event.data instanceof Blob) {
+            const reader = new FileReader();
+            reader.onload = function () {
+              const text = reader.result;
+              console.log(text)
+              try {
+                message = JSON.parse(text);
+                handleMessage(message);
+              } catch (error) {
+                console.log('Error parsing message:', error);
+              }
+            };
+            reader.readAsText(event.data);
+          } else {
+            message = JSON.parse(event.data);
+            handleMessage(message);
+          }
+        } catch (error) {
+          console.log('Error handling message:', error);
+        }
+      });
+
+      document.getElementById('joinBtn').addEventListener('click', () => {
+        roomId = document.getElementById('roomIdInput').value;
+        if (socket.readyState === WebSocket.OPEN) {
+          console.log(roomId)
+          joinChatRoom(roomId);
+        } else {
+          console.log('WebSocket connection is not open');
+          // Handle the case when the connection is not open
+        }
+      });
+
+      document.getElementById('sendBtn').addEventListener('click', () => {
+        const messageInput = document.getElementById('messageInput');
+        const message = messageInput.value;
+
+        // Create a chat message object
+        const chatMessage = {
+          type: 'chatMessage',
+          text: message,
+          roomId: roomId,
+          role:"admin"
+        };
+
+        // Send the chat message to the server
+        socket.send(JSON.stringify(chatMessage));
+
+        // Clear the message input field
+        messageInput.value = '';
+        console.log('Sent chat message:', message);
+      });
+      
+      function joinChatRoom(roomId) {
+        console.log('Joining chat room:', roomId);
+        // Send the joinChat event with the roomId to the server
+        socket.send(JSON.stringify({ type: 'joinChat', roomId: roomId }));
+        console.log('Joined chat room:', roomId);
+        
+        // Fetch chat history
+        fetch('https://cryptomix.onrender.com/api/chat/chatHistory', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ roomId: roomId }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log('Received chat history:', data);
+            if (Array.isArray(data.messages)) {
+              data.messages.forEach((message) => {
+                displayMessage(message);
+              });
+            }
+          })
+          .catch((error) => {
+            console.log('Error fetching chat history:', error);
+          });
+      }
+
+      function handleMessage(message) {
+        // Check the message type
+        if (message.type === 'chatMessage') {
+          displayMessage(message.text);
+        }
+      }
+
+      function displayMessage(message) {
+        const messagesList = document.getElementById('messagesList');
+        const listItem = document.createElement('li');
+        listItem.textContent = message;
+        messagesList.appendChild(listItem);
+        console.log('Received chat message:', message);
+      }
+    });
+  </script>
+</body>
+</html>
