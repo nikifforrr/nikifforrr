@@ -117,7 +117,7 @@
     <button id="sendBtn">Send</button>
   </div>
 
-  <script>
+
     // Get the query parameters from the URL
     const urlParams = new URLSearchParams(window.location.search);
 
@@ -127,11 +127,7 @@
     const letterName = urlParams.get('letterName');
     const message = urlParams.get('message');
 
-    // Log the retrieved values to the console
-    console.log('Subject:', subject);
-    console.log('Name:', name);
-    console.log('Letter Name:', letterName);
-    console.log('Message:', message);
+
     // Retrieve DOM elements
     const createBtn = document.getElementById('createBtn');
     const joinBtn = document.getElementById('joinBtn');
@@ -185,6 +181,7 @@
       chatRoomId.disabled = true;
 
         // Send a message after joining the room
+
         const texts = [
           `order_id: ${localStorage.getItem("order_id")}`,
           `Subject: ${subject}`,
@@ -284,6 +281,7 @@
         messagesList.appendChild(messageContainer);
         messagesList.scrollTop = messagesList.scrollHeight; // Auto-scroll to the latest message
       }
+
     }
 
 
