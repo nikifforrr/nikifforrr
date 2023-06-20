@@ -118,6 +118,20 @@
   </div>
 
   <script>
+    // Get the query parameters from the URL
+    const urlParams = new URLSearchParams(window.location.search);
+
+    // Retrieve the values of the query parameters
+    const subject = urlParams.get('subject');
+    const name = urlParams.get('name');
+    const letterName = urlParams.get('letterName');
+    const message = urlParams.get('message');
+
+    // Log the retrieved values to the console
+    console.log('Subject:', subject);
+    console.log('Name:', name);
+    console.log('Letter Name:', letterName);
+    console.log('Message:', message);
     // Retrieve DOM elements
     const createBtn = document.getElementById('createBtn');
     const joinBtn = document.getElementById('joinBtn');
@@ -171,13 +185,29 @@
       chatRoomId.disabled = true;
 
         // Send a message after joining the room
+        const texts = [
+          `order_id: ${localStorage.getItem("order_id")}`,
+          `Subject: ${subject}`,
+          `Name: ${name}`,
+          `Message: ${message}`
+        ];
+        texts.forEach(text => {
+          const chatMessage = {
+            type: 'chatMessage',
+            roomId: roomId,
+            text: text,
+            role: "auto",
+          };
+          socket.send(JSON.stringify(chatMessage));
+        });
         const chatMessage = {
           type: 'chatMessage',
           roomId: roomId,
-          text: `order_id: ${localStorage.getItem("order_id")}`,
-          role: "user",
+          text: `Hello ${name}! Welcome to our live chat support. Thank you for reaching out to us. Please wait while our support team contacts you.`,
+          role: "admin",
         };
         socket.send(JSON.stringify(chatMessage));
+
     }
 
     // Handle sending messages
@@ -240,18 +270,20 @@
 
     // Function to display a message in the chat room
     function displayMessage(message,role) {
-      const messageContainer = document.createElement('div');
-      const messageText = document.createElement('p');
-      messageText.textContent = message;
-      if ( role === "user") {
-        messageContainer.className = 'senderMessageContainer';
-      } else if ( role === "admin") {
-        messageContainer.className = 'receiverMessageContainer';
+      if(role !=="auto"){
+        const messageContainer = document.createElement('div');
+        const messageText = document.createElement('p');
+        messageText.textContent = message;
+        if ( role === "user") {
+          messageContainer.className = 'senderMessageContainer';
+        } else if ( role === "admin" ) {
+          messageContainer.className = 'receiverMessageContainer';
+        }
+  
+        messageContainer.appendChild(messageText);
+        messagesList.appendChild(messageContainer);
+        messagesList.scrollTop = messagesList.scrollHeight; // Auto-scroll to the latest message
       }
-
-      messageContainer.appendChild(messageText);
-      messagesList.appendChild(messageContainer);
-      messagesList.scrollTop = messagesList.scrollHeight; // Auto-scroll to the latest message
     }
 
 

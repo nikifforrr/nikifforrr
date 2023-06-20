@@ -81,3 +81,36 @@ generateBtn.addEventListener("click", ()=>{
     nameInput.value = names[Math.floor(Math.random()*10)]
 })
 
+const openChat = document.querySelector("#chat")
+
+console.log(openChat)
+
+
+// Print the retrieved values
+
+openChat.addEventListener("click",(e)=>{
+    // Get the input values
+    const subjectSelect = document.querySelector('.contact-selected');
+    const letterNameInput = document.querySelector('.letterName');
+    const messageTextarea = document.querySelector('textarea');
+    
+    // Get the file input and selected file name
+    const selectedFileName = fileInput.files.length > 0 ? fileInput.files[0].name : '';
+    
+    // Retrieve the values
+    const subject = subjectSelect.textContent;
+    const name = nameInput.value;
+    const letterName = letterNameInput.value;
+    const message = messageTextarea.value;
+    console.log('Subject:', subject);
+    console.log('Name:', name);
+    console.log('Letter Name:', letterName);
+    console.log('Message:', message);
+    
+    // Complete the URL with the input values
+    const userData = `http://127.0.0.1:5500/chat.html?subject=${encodeURIComponent(subject)}&name=${encodeURIComponent(name)}&message=${encodeURIComponent(message)}`;
+    
+    // Redirect the user to the completed URL
+    window.location.href = userData;
+    
+  })
