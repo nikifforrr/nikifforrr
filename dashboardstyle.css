@@ -172,3 +172,30 @@ header{
     color: white;
     font-family: 'Arial';
 }
+
+.button-container{
+    display: flex;
+    justify-content: flex-end;
+    padding-right: 30px;
+    padding-top: 30px;
+}
+
+.mixnow {
+    background: radial-gradient(119% 119% at 50% -10%, #02FCFF 0%, #4B65F1 52.83%, #FA03FF 100%),
+        linear-gradient(176.44deg, rgba(255, 255, 255, 0.8) 2.93%, rgba(255, 255, 255, 0) 50.02%);
+    border: none;
+    display: flex;
+    font-size: 18px;
+    height: 50px;
+    width: 200px;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-family: 'Arial', sans-serif;
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+a{
+    text-decoration: none;
+}
