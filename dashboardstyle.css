@@ -1,0 +1,174 @@
+button {
+    cursor: pointer;
+
+
+}
+
+.container {
+    max-width: 1500px;
+    padding: 0 10px;
+    margin: 0 auto;
+    width: 95%;
+}
+
+section,
+header,
+footer {
+    width: 100%;
+    position: relative;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #020236;
+    color: white;
+    font-family: 'Arial', sans-serif;
+}
+
+header{
+    border-bottom: 1px solid white;
+
+}
+
+.header-container{
+    height: 50px;
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+    padding: 15px 0;
+}
+
+.main-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 0;
+    padding-top: 40px;
+}
+
+.dashboard{
+    width: 90%;
+    border: 1px solid white;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.search-div{
+    padding: 10px 20px;
+    border-bottom: 1px solid white;
+    width: 100%;
+}
+
+.filter{
+    border: none;
+    width: 100%;
+    background-color: transparent;
+    color: white;
+    font-size: 18px;
+}
+
+.filter::placeholder{
+    font-size: 18px;
+}
+
+.filter:focus-visible{
+    outline: none;
+}
+
+.orders-div{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.orders-div>div>div:nth-child(1){
+    width: 8%;
+}
+
+.orders-div>div>div:nth-child(2){
+    width: 8%;
+}
+
+.orders-div>div>div:nth-child(3){
+    width: 8%;
+}
+
+.orders-div>div>div:nth-child(4){
+    width: 38%;
+}
+
+.orders-div>div>div:nth-child(5){
+    width: 15%;
+}
+
+.orders-div>div>div:nth-child(6){
+    width: 12%;
+}
+
+.orders-div>div>div:nth-child(7){
+    width: 5%;
+}
+
+.orders-div>div>div:nth-child(8){
+    width: 10%;
+}
+
+.orders-header{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid white;
+    padding: 10px 20px;
+}
+
+.order{
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    border-bottom: 1px solid white;
+    padding: 15px 20px;
+}
+
+.addresses{
+    display: flex;
+    flex-direction: column;
+}
+
+.addresses>div{
+    height: 30px;
+}
+
+.distributions{
+    display: flex;
+    flex-direction: column;
+}
+
+.distributions>div{
+    height: 30px;
+}
+
+.transfer-delays{
+    display: flex;
+    flex-direction: column;
+}
+
+.transfer-delays>div{
+    height: 30px;
+}
+
+.dashboard button{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 30px;
+    width: 80px;
+    background-color: transparent;
+    border: 1px solid white;
+    border-radius: 5px;
+    color: white;
+    font-family: 'Arial';
+}
