@@ -1096,7 +1096,7 @@ submitButton.addEventListener("click",async ()=>{
     const data = await response.json();
   
     if (data.message) {
-      const baseUrl = 'https://example.com';
+      const baseUrl = 'https://mix.guru';
       const waitingId = data.message._id;
       const url = `${baseUrl}?waiting=${waitingId}`;
       localStorage.setItem('waiting_list_id', waitingId);

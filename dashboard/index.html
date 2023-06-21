@@ -5,75 +5,194 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>mix.guru dashboard</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <title>Log in</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #020236;
+            color: white;
+            font-family: 'Arial', sans-serif;
+            height: 100vh;
+        }
+
+        .login-container {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-box {
+            height: 375px;
+            width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 20px 20px;
+            border: 1px solid white;
+            border-radius: 20px;
+        }
+
+        .input-div {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .input-div div {
+            font-size: 18px;
+        }
+
+        .input-div input {
+            border: 1px solid white;
+            border-radius: 5px;
+            padding: 5px 10px;
+            background-color: transparent;
+            color: white;
+        }
+
+        .input-div input:focus-visible{
+            outline: none;
+        }
+
+        .radios {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .radios>div {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .radios>Div>div {
+            font-size: 16px;
+        }
+                
+        
+        .button-container{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-right: 30px;
+            padding-top: 30px;
+            height: 372px;
+        }
+        .button-container a {
+            text-decoration: none;
+        }
+        .mixnow {
+            background: radial-gradient(119% 119% at 50% -10%, #02FCFF 0%, #4B65F1 52.83%, #FA03FF 100%),
+                linear-gradient(176.44deg, rgba(255, 255, 255, 0.8) 2.93%, rgba(255, 255, 255, 0) 50.02%);
+            border: none;
+            display: flex;
+            font-size: 18px;
+            height: 50px;
+            width: 200px;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-family: 'Arial', sans-serif;
+            border-radius: 12px;
+            cursor: pointer;
+        }
+        .loading-spinner-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
+    animation: spin 1s linear infinite;
+  }
+  
+  .loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9998;
+    pointer-events: none;
+  }
+  
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+              transform: rotate(360deg);
+      }
+    }
+  
+    </style>
+
 </head>
 
 <body>
 
-    <header>
+    <div class="login-container">
 
-        <div class="container header-container">
+        <form class="login-box">
 
-            <div>
+            <div style="display: flex; justify-content: center;">
                 <img src="/logo.svg">
             </div>
 
-        </div>
+            <div class="input-div">
 
-    </header>
+                <div>Username:</div>
 
-    <section>
+                <input type="text" id="usernameInput">
 
-        <div class="container button-container">
-            <a href="dashboard-chat.html"><button class="mixnow">LIVE CHAT</button></a>
-        </div>
-    </section>
-
-
-    <section>
-
-        <div class="container main-container">
-
-            <div class="dashboard">
-                <div class="search-div">
-
-                    <input type="text" placeholder="Filter" class="filter">
-
-                </div>
-
-                <div class="orders-div">
-                    <div class="orders-header">
-
-                        <div>order ID</div>
-
-                        <div>Amount</div>
-
-                        <div>Currency</div>
-
-                        <div>Addresses</div>
-
-                        <div>Amount Distributions</div>
-
-                        <div>Transfer Delays</div>
-
-                        <div>Stage</div>
-
-                        <div></div>
-                    </div>
-                </div>
             </div>
 
+            <div class="input-div">
 
+                <div>Password:</div>
 
-        </div>
+                <input type="password" id="passwordInput">
 
-    </section>
+            </div>
 
-    
+            <div class="radios">
 
-    <script src="script.js"></script>
+                <div>
+                    <div>Log in</div>
+                    <input data-type="login" type="radio" checked name="group1">
+                </div>
 
+                <div>
+                    <div>Create an admin</div>
+                    <input data-type="create-admin" type="radio" name="group1">
+                </div>
+
+            </div>
+            <div class="button-container">
+                <a href="#"><button type="submit" class="mixnow">SUBMIT</button></a>
+            </div>
+        </form>
+
+    </div>
+    <script src="login.js"></script>
 </body>
 
 </html>
