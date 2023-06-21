@@ -5,7 +5,7 @@ if(!access_token&&!refresh_token){
 }
 
 if (access_token && refresh_token) {
-  fetch("https://cryptomix.onrender.com/auth/admin/verify-token", {
+  fetch("https://cryptomix.onrender.com/auth/verify-token", {
     headers: {
       Authorization: `Bearer ${access_token}`,
     },
@@ -16,7 +16,7 @@ if (access_token && refresh_token) {
         console.log("Token is valid");
       } else {
         // Token is invalid, try refreshing
-        fetch("https://cryptomix.onrender.com/auth/admin/refresh-token", {
+        fetch("https://cryptomix.onrender.com/auth/refresh-token", {
           method: "POST",
           headers: {
             Authorization: `Bearer ${refresh_token}`,
@@ -48,7 +48,7 @@ if (access_token && refresh_token) {
 
 
 if (access_token) {
-  fetch("https://cryptomix.onrender.com/auth/admin/verify-token", {
+  fetch("https://cryptomix.onrender.com/auth/verify-token", {
     headers: {
       Authorization: `Bearer ${access_token}`,
     },
@@ -68,7 +68,7 @@ if (access_token) {
 }
 if (refresh_token) {
         // Token is invalid, try refreshing
-        fetch("https://cryptomix.onrender.com/auth/admin/refresh-token", {
+        fetch("https://cryptomix.onrender.com/auth/refresh-token", {
           method: "POST",
           headers: {
             Authorization: `Bearer ${refresh_token}`,
