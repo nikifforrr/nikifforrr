@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log in</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #020236;
+            color: white;
+            font-family: 'Arial', sans-serif;
+            height: 100vh;
+        }
+
+        .login-container {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-box {
+            height: 300px;
+            width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 20px 20px;
+            border: 1px solid white;
+            border-radius: 20px;
+        }
+
+        .input-div {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .input-div div {
+            font-size: 18px;
+        }
+
+        .input-div input {
+            border: 1px solid white;
+            border-radius: 5px;
+            padding: 5px 10px;
+            background-color: transparent;
+            color: white;
+        }
+
+        .input-div input:focus-visible{
+            outline: none;
+        }
+
+        .radios {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .radios>div {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .radios>Div>div {
+            font-size: 16px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="login-container">
+
+        <form class="login-box">
+
+            <div style="display: flex; justify-content: center;">
+                <img src="/img/logo.svg">
+            </div>
+
+            <div class="input-div">
+
+                <div>Username:</div>
+
+                <input type="text" id="usernameInput">
+
+            </div>
+
+            <div class="input-div">
+
+                <div>Password:</div>
+
+                <input type="password" id="passwordInput">
+
+            </div>
+
+            <div class="radios">
+
+                <div>
+                    <div>Log in</div>
+                    <input type="radio" checked name="group1">
+                </div>
+
+                <div>
+                    <div>Create an admin</div>
+                    <input type="radio" name="group1">
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</body>
+
+</html>
