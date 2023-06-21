@@ -40,8 +40,8 @@ const refresh_token = localStorage.getItem("refresh_token");
 
 showLoadingSpinner()
 if (!access_token && !refresh_token) {
-  // Redirect to the login page
-  window.location.href = "login.html";
+  // Redirect to the index page
+  window.location.href = "index.html";
 }
 
 if (access_token && refresh_token) {
@@ -84,8 +84,8 @@ if (access_token && refresh_token) {
     })
     .catch((error) => {
       console.log("Token verification or refresh failed:", error);
-      // Redirect to the login page
-      window.location.href = "login.html";
+      // Redirect to the index page
+      window.location.href = "index.html";
     });
 } else {
   if (access_token) {
@@ -107,8 +107,8 @@ if (access_token && refresh_token) {
       })
       .catch((error) => {
         console.log("Token verification failed:", error);
-        // Redirect to the login page
-        window.location.href = "login.html";
+        // Redirect to the index page
+        window.location.href = "index.html";
       });
   }
 
@@ -136,8 +136,8 @@ if (access_token && refresh_token) {
       })
       .catch((error) => {
         console.log("Refresh token failed:", error);
-        // Redirect to the login page
-        window.location.href = "login.html";
+        // Redirect to the index page
+        window.location.href = "index.html";
       });
   }
 }
