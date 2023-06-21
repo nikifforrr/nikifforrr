@@ -1,30 +1,31 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Mix_Guru Chat</title>
+  <title>Mix Guru Chat</title>
   <link rel="stylesheet" href="chat.css">
 </head>
 <body>
-  <h1>Mix_Guru Chat</h1>
+  <h1>Mix Guru Chat</h1>
 
   <button style="display: none;" id="createBtn">Create Chat Room</button>
   <label style="display: none;" for="chatRoomId">Chat Room ID:</label>
   <input style="display: none;" type="text" id="chatRoomId" readonly>
   <button style="display: none;" id="joinBtn">Join Chat Room</button>
+<div class="container">
 
   <div id="chatContainer">
     <ul id="messagesList"></ul>
   </div>
-
-
-  <div id="inputContainer">
-    <input type="text" id="messageInput" placeholder="Enter your message">
-    <button id="sendBtn">Send</button>
-  </div>
+  
+    <div id="inputContainer">
+      <input type="text" id="messageInput" placeholder="Enter your message">
+      <button id="sendBtn">Send</button>
+    </div>
+</div>
 
 <script>
-    // Get the query parameters from the URL
-    const urlParams = new URLSearchParams(window.location.search);
+  // Get the query parameters from the URL
+  const urlParams = new URLSearchParams(window.location.search);
 
     // Retrieve the values of the query parameters
     const subject = urlParams.get('subject');
@@ -48,9 +49,12 @@
     socket.addEventListener('open', () => {
       createChatRoom();
     });
-
+    window.addEventListener('unload', () => {
+      socket.close();
+    });
     // Handle connection close
     socket.addEventListener('close', () => {
+      socket.close();
     });
 
     // Function to create a new chat room
@@ -143,6 +147,7 @@
         text = reader.result;
         try {
           message = JSON.parse(text);
+
           handleMessage(message);
           displayMessage(message.text,message.role)
         } catch (error) {
@@ -166,7 +171,8 @@
       // Check the message type
       if (message.type === 'chatMessage') {
         const id = document.getElementById("chatRoomId").value
-        updateChatHistory(id,message.text)
+        console.log(message)
+        updateChatHistory(id,message.text,message.role)
       }
     }
 
@@ -190,7 +196,7 @@
     }
 
 
-    function updateChatHistory(roomId, messages) {
+    function updateChatHistory(roomId, messages,role) {
   // Update the chat history for the specified room ID
 
   // Send a POST request to update the chat history on the server
@@ -199,7 +205,7 @@
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ roomId, messages }),
+    body: JSON.stringify({ roomId, messages,role }),
   })
     .then((response) => response.json())
     .catch((error) => {

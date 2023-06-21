@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat Application</title>
+  <link rel="stylesheet" href="dashborad-chat.css">
+</head>
+<body>
+  <h1>Chat Application</h1>
+  <div class="container">
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <p>Chat Rooms</p>
+        <ul id="chat-rooms-list" class="chat-rooms-list">
+          <div class="chat-room">
+            <div>
+              <input type="text" id="roomIdInput" placeholder="Enter Room ID">
+              <button id="joinBtn">Join Room</button>
+            </div>
+          </div>
+
+      </ul>
+    </div>
+    </div>
+    <div class="chat-container">
+      <div class="chat-header">
+        <h2>Chat Room</h2>
+      </div>
+      <div class="chat-messages">
+        <ul id="messagesList"></ul>
+      </div>
+      <div class="input-area">
+        <input type="text" id="messageInput" placeholder="Type your message">
+        <button id="sendBtn">Send</button>
+      </div>
+    </div>
+  </div>
+
+
+  <script src="./dashboard-chat.js">
+  </script>
+</body>
+</html>
