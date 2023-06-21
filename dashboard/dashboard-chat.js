@@ -40,14 +40,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  document.getElementById('joinBtn').addEventListener('click', () => {
-    roomId = document.getElementById('roomIdInput').value;
-    if (socket.readyState === WebSocket.OPEN) {
-      joinChatRoom(roomId);
-    } else {
-      console.log('WebSocket connection is not open');
-    }
-  });
+
 
   document.getElementById('sendBtn').addEventListener('click', () => {
     const messageInput = document.getElementById('messageInput');

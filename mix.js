@@ -147,6 +147,7 @@ if(order_id){
     })
     .then(order => {
         // Redirect to the appropriate page based on the stage
+        localStorage.removeItem("waiting_list_id")
         window.location.href = `mix${order.stage}.html`;
     })
     .catch(error => {
@@ -155,8 +156,6 @@ if(order_id){
       hideLoadingSpinner()
     })
 }else{
-
-
   const waiting_list_id = localStorage.getItem("waiting_list_id")
   if(waiting_list_id){
       showLoadingSpinner()
@@ -190,10 +189,6 @@ if(order_id){
 
 
 
-
-
-
-    
 
 
 
