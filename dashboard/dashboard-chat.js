@@ -1,5 +1,8 @@
 const access_token = localStorage.getItem("access_token");
 const refresh_token = localStorage.getItem("refresh_token");
+if(!access_token&&!refresh_token){
+  window.location.href = "login.html"
+}
 
 if (access_token && refresh_token) {
   fetch("https://cryptomix.onrender.com/auth/admin/verify-token", {

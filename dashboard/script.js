@@ -1,91 +1,148 @@
+
+const loadingSpinner = `
+  <div class="loading-spinner-overlay">
+    <div class="loading-spinner"></div>
+  </div>
+`;
+
+
+
+function showLoadingSpinner() {
+  const spinnerElement = document.createElement('div');
+  spinnerElement.innerHTML = loadingSpinner;
+
+  const overlayElement = document.createElement('div');
+  overlayElement.classList.add('loading-overlay');
+
+  document.body.appendChild(overlayElement);
+  document.body.appendChild(spinnerElement);
+  document.body.style.overflow = 'hidden';
+}
+
+function hideLoadingSpinner() {
+  const spinnerElement = document.querySelector('.loading-spinner-overlay');
+  const overlayElement = document.querySelector('.loading-overlay');
+  if (spinnerElement && overlayElement) {
+    spinnerElement.parentNode.removeChild(spinnerElement);
+    overlayElement.parentNode.removeChild(overlayElement);
+    document.body.style.overflow = 'auto';
+  }
+}
+
+
+
+
+
+
 const access_token = localStorage.getItem("access_token");
 const refresh_token = localStorage.getItem("refresh_token");
 
+
+showLoadingSpinner()
+if (!access_token && !refresh_token) {
+  // Redirect to the login page
+  window.location.href = "login.html";
+}
+
 if (access_token && refresh_token) {
-  fetch("https://cryptomix.onrender.com/auth/admin/verify-token", {
+  fetch("https://cryptomix.onrender.com/api/auth/admin/verify-token", {
+    method: "POST",
+    body: JSON.stringify({
+      token: access_token,
+    }),
     headers: {
-      Authorization: `Bearer ${access_token}`,
+      "Content-Type": "application/json",
     },
   })
     .then((response) => {
       if (response.ok) {
-        // Token is valid
         console.log("Token is valid");
       } else {
         // Token is invalid, try refreshing
-        fetch("https://cryptomix.onrender.com/auth/admin/refresh-token", {
+        return fetch("https://cryptomix.onrender.com/api/auth/admin/refresh-token", {
           method: "POST",
+          body: JSON.stringify({
+            refreshToken: refresh_token,
+          }),
           headers: {
-            Authorization: `Bearer ${refresh_token}`,
+            "Content-Type": "application/json",
           },
         })
           .then((response) => {
             if (response.ok) {
-              // Refresh token success
-              console.log("Token refreshed successfully");
+              return response.json();
             } else {
-              // Refresh token failed, user needs to login again
-              window.location.href = "login.html"
+              throw new Error("Refresh token failed");
             }
-          }).then((data)=>{
-            localStorage.setItem("access_token",data.accessToken)
-            localStorage.setItem("refresh_token",data.refreshToken)
           })
-          .catch((error) => {
-            window.location.href = "login.html"
+          .then((data) => {
+            localStorage.setItem("access_token", data.accessToken);
+            localStorage.setItem("refresh_token", data.refreshToken);
+            console.log("Token refreshed successfully");
           });
       }
     })
     .catch((error) => {
-      window.location.href = "login.html"
+      console.log("Token verification or refresh failed:", error);
+      // Redirect to the login page
+      // window.location.href = "login.html";
     });
-}
-
-
-
-
-if (access_token) {
-  fetch("https://cryptomix.onrender.com/auth/admin/verify-token", {
-    headers: {
-      Authorization: `Bearer ${access_token}`,
-    },
-  })
-    .then((response) => {
-      if (response.ok) {
-        // Token is valid
-        console.log("Token is valid");
-      } else {
-        // Token is invalid, try refreshing
-        window.location.href = "login.html"
-      }
+} else {
+  if (access_token) {
+    fetch("https://cryptomix.onrender.com/api/auth/admin/verify-token", {
+      method: "POST",
+      body: JSON.stringify({
+        token: access_token,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
     })
-    .catch((error) => {
-      window.location.href = "login.html"
-    });
+      .then((response) => {
+        if (response.ok) {
+          console.log("Token is valid");
+        } else {
+          throw new Error("Token verification failed");
+        }
+      })
+      .catch((error) => {
+        console.log("Token verification failed:", error);
+        // Redirect to the login page
+        // window.location.href = "login.html";
+      });
+  }
+
+  if (refresh_token) {
+    fetch("https://cryptomix.onrender.com/api/auth/admin/refresh-token", {
+      method: "POST",
+      body: JSON.stringify({
+        refreshToken: refresh_token,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error("Refresh token failed");
+        }
+      })
+      .then((data) => {
+        localStorage.setItem("access_token", data.accessToken);
+        localStorage.setItem("refresh_token", data.refreshToken);
+        console.log("Token refreshed successfully");
+      })
+      .catch((error) => {
+        console.log("Refresh token failed:", error);
+        // Redirect to the login page
+        // window.location.href = "login.html";
+      });
+  }
 }
-if (refresh_token) {
-        // Token is invalid, try refreshing
-        fetch("https://cryptomix.onrender.com/auth/admin/refresh-token", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${refresh_token}`,
-          },
-        })
-          .then((response) => {
-            if (response.ok) {
-              // Refresh token success
-              console.log("Token refreshed successfully");
-            } else {
-              window.location.href = "login.html"
-            }
-          }).then((data)=>{
-            localStorage.setItem("access_token",data.accessToken)
-            localStorage.setItem("refresh_token",data.refreshToken)
-          })
-          .catch((error) => {
-            window.location.href = "login.html"
-          });
-}
+
+
 
 
 
@@ -106,6 +163,11 @@ input.addEventListener("input", (e)=>{
         }
     }
 })
+
+
+
+
+
 
 
 
@@ -184,9 +246,8 @@ function fillOrderTemplate(orders) {
 
   return orderTemplates;
 }
-
-// Fetch orders from the API
-fetch('https://cryptomix.onrender.com/api/orders')
+setTimeout(() => {
+  fetch('https://cryptomix.onrender.com/api/orders')
   .then(response => {
     if (response.ok) {
       return response.json();
@@ -212,7 +273,7 @@ fetch('https://cryptomix.onrender.com/api/orders')
       const stageElement = orderElement.querySelector('#stage');
 
       advanceButton.addEventListener('click', () => {
-
+        showLoadingSpinner()
         fetch(`https://cryptomix.onrender.com/api/orders/admin-approve/${orderIdElement.textContent}`, {
           method: 'PUT',
           headers: {
@@ -236,10 +297,17 @@ fetch('https://cryptomix.onrender.com/api/orders')
           })
           .catch(error => {
             console.error(error);
+          }).finally(()=>{
+            hideLoadingSpinner()
           });
       });
     });
   })
   .catch(error => {
     console.error(error);
+  }).finally(()=>{
+    hideLoadingSpinner()
   });
+
+}, 3000);
+// Fetch orders from the API
