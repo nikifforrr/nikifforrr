@@ -57,7 +57,7 @@ if(orderId){
         console.log("Stage is 4, no action needed");
       } else {
         // Redirect to the appropriate page based on the stage
-        window.location.href = `mix${order.stage}.html`;
+        window.location.href = `./mix${order.stage}.html`;
       }
     })
     .catch(error => {

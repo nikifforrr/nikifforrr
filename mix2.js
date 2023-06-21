@@ -57,7 +57,7 @@ if(orderId){
         console.log("Stage is 2, no action needed");
       } else {
         // Redirect to the appropriate page based on the stage
-        window.location.href = `mix${order.stage}.html`;
+        window.location.href = `./mix${order.stage}.html`;
       }
     })
     .catch(error => {
@@ -104,7 +104,7 @@ batoni.addEventListener("click", ()=>{
     })
       .then(response => {
         if (response.ok) {
-          window.location.href = `mix3.html`;
+          window.location.href = `./mix3.html`;
           return response.json();
         } else {
           throw new Error('Error fetching order');

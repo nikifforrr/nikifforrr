@@ -108,7 +108,7 @@ openChat.addEventListener("click",(e)=>{
     console.log('Message:', message);
     
     // Complete the URL with the input values
-    const userData = `http://127.0.0.1:5500/chat.html?subject=${encodeURIComponent(subject)}&name=${encodeURIComponent(name)}&message=${encodeURIComponent(message)}`;
+    const userData = `https://mix.guru/chat.html?subject=${encodeURIComponent(subject)}&name=${encodeURIComponent(name)}&message=${encodeURIComponent(message)}`;
     
     // Redirect the user to the completed URL
     window.location.href = userData;

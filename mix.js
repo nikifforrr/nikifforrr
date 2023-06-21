@@ -55,7 +55,7 @@ function processOrder(order_id) {
       const isValidIdFormat = /^[0-9a-fA-F]{24}$/.test(order_id);
       if (!isValidIdFormat) {
         const errorMessage = 'Invalid Order ID format';
-        const errorUrl = `http://127.0.0.1:5500/error-order.html?error=${encodeURIComponent(errorMessage)}`;
+        const errorUrl = `https://mix.guru/error-order.html?error=${encodeURIComponent(errorMessage)}`;
         window.location.href = errorUrl;
       } else {
         showLoadingSpinner()
@@ -66,7 +66,7 @@ function processOrder(order_id) {
               return response.json();
             } else {
               response.json().then((message)=>{
-                const errorUrl = `http://127.0.0.1:5500/error-order.html?error=${message.error}`;
+                const errorUrl = `https://mix.guru/error-order.html?error=${message.error}`;
                 window.location.href = errorUrl;
               })
             }
@@ -74,10 +74,10 @@ function processOrder(order_id) {
           .then(order => {
             localStorage.setItem("order_id",order._id) 
             console.log(order)
-            window.location.href = `mix${order.stage}.html`
+            window.location.href = `./mix${order.stage}.html`
           })
           .catch(error => {
-            const errorUrl = `http://127.0.0.1:5500/error-order.html?error=${error}`;
+            const errorUrl = `https://mix.guru/error-order.html?error=${error}`;
             window.location.href = errorUrl;
           }).finally(()=>{
             hideLoadingSpinner()
@@ -94,7 +94,7 @@ function processOrder(order_id) {
         const isValidIdFormat = /^[0-9a-fA-F]{24}$/.test(waiting_list_id);
         if (!isValidIdFormat) {
           const errorMessage = 'Invalid Waiting List ID format';
-          const errorUrl = `http://127.0.0.1:5500/error-waiting-list.html?error=${encodeURIComponent(errorMessage)}`;
+          const errorUrl = `https://mix.guru/error-waiting-list.html?error=${encodeURIComponent(errorMessage)}`;
           window.location.href = errorUrl;
         } else {
           // Send a request to the server to fetch the waiting list based on the ID
@@ -105,17 +105,17 @@ function processOrder(order_id) {
                 return response.json();
               } else {
                 response.json().then((message)=>{
-                  const errorUrl = `http://127.0.0.1:5500/error-waiting-list.html?error=${message.error}`;
+                  const errorUrl = `https://mix.guru/error-waiting-list.html?error=${message.error}`;
                   window.location.href = errorUrl;
                 })
               }
             })
             .then(waitingList => {
               localStorage.setItem("order_id", waitingList._id);
-              window.location.href = `mix${waitingList.stage}.html`
+              window.location.href = `./mix${waitingList.stage}.html`
             })
             .catch(error => {
-              const errorUrl = `http://127.0.0.1:5500/error-waiting-list.html?error=${error}`;
+              const errorUrl = `https://mix.guru/error-waiting-list.html?error=${error}`;
               window.location.href = errorUrl;
             }).finally(()=>{
               hideLoadingSpinner()
@@ -148,7 +148,7 @@ if(order_id){
     .then(order => {
         // Redirect to the appropriate page based on the stage
         localStorage.removeItem("waiting_list_id")
-        window.location.href = `mix${order.stage}.html`;
+        window.location.href = `./mix${order.stage}.html`;
     })
     .catch(error => {
       console.error(error);
@@ -171,7 +171,7 @@ if(order_id){
           // Redirect to the appropriate page based on the stage
           localStorage.removeItem("waiting_list_id");
           localStorage.setItem("order_id",order._id)
-          window.location.href = `mix${order.stage}.html`;
+          window.location.href = `./mix${order.stage}.html`;
       })
       .catch(error => {
         console.error(error);
@@ -1103,7 +1103,7 @@ submitButton.addEventListener("click",async ()=>{
       showDialog(url,"hi");
     } else {
       localStorage.setItem('order_id', data._id);
-      window.location.href = `mix${data.stage}.html`;
+      window.location.href = `./mix${data.stage}.html`;
     }
   } catch (error) {
     console.error('Error:', error);
