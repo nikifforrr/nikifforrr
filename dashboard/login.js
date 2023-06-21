@@ -44,6 +44,9 @@ if (access_token && refresh_token) {
   showLoadingSpinner()
   fetch("https://cryptomix.onrender.com/api/auth/verify-token", {
     method: "POST",
+    headers: {
+      'Content-Type': 'application/json'
+    },
     body: JSON.stringify({
       token: access_token,
     }),
@@ -58,6 +61,9 @@ if (access_token && refresh_token) {
         // Token is invalid, try refreshing
         return fetch("https://cryptomix.onrender.com/api/auth/refresh-token", {
           method: "POST",
+          headers: {
+            'Content-Type': 'application/json'
+          },
           body: JSON.stringify({
             refreshToken: refresh_token,
           }),
@@ -88,6 +94,9 @@ if (access_token && refresh_token) {
     showLoadingSpinner()
     fetch("https://cryptomix.onrender.com/api/auth/verify-token", {
       method: "POST",
+      headers: {
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify({
         token: access_token,
       }),
@@ -111,6 +120,9 @@ if (access_token && refresh_token) {
     showLoadingSpinner()
     fetch("https://cryptomix.onrender.com/api/auth/refresh-token", {
       method: "POST",
+      headers: {
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify({
         refreshToken: refresh_token,
       }),
@@ -147,15 +159,12 @@ submitButton.addEventListener('click', function(event) {
   event.preventDefault(); // Prevent the form submission
 
   const selectedRadio = document.querySelector('input[name="group1"]:checked');
-  const dataType = selectedRadio.getAttribute('data-type');
 
   const usernameInput = document.getElementById('usernameInput');
   const passwordInput = document.getElementById('passwordInput');
   const username = usernameInput.value;
   const password = passwordInput.value;
 
-  if (dataType === 'login') {
-      console.log(username,password);
 
     // Perform authentication with username and password
     fetch('https://cryptomix.onrender.com/api/auth/authenticate', {
@@ -179,22 +188,6 @@ submitButton.addEventListener('click', function(event) {
         // Handle authentication error
         console.log('Authentication failed:', error);
       });
-  } else if (dataType === 'create-admin') {
-    // Perform admin creation with username and password
-    fetch('https://cryptomix.onrender.com/api/auth/admin', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ username, password })
-    })
-      .then(response => {
-        // Continue with any other actions after successful admin creation
-        alert('Admin creation successful');
-      })
-      .catch(error => {
-        // Handle admin creation error
-        console.log('Admin creation failed:', error);
-      });
-  }
-});
+  })
+
+
