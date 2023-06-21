@@ -4,6 +4,18 @@ body {
   display: flex;
   flex-direction: column;
   font-family: Arial, sans-serif;
+  background-color: #020236;
+  color: white;
+}
+
+.colors {
+  background-image: linear-gradient(90.87deg, #02FCFF 0%, #4B65F1 50%, #FA03FF 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -moz-background-clip: text;
+  -moz-text-fill-color: transparent;
+  color: transparent;
 }
 
 h1 {
@@ -93,8 +105,10 @@ h1 {
   flex-grow: 1;
   padding: 5px;
   border-radius: 5px;
-  border: 1px solid #ccc;
+  border: 1px solid white;
   margin-right: 10px;
+  background-color: transparent;
+
 }
 
 .input-area button {
@@ -151,9 +165,8 @@ h1 {
 }
 #inputContainer {
   display: flex;
-  align-items: center;
-  padding: 10px;
-  background-color: #f5f5f5;
+  background-color: transparent;
+  margin-top: 10px;
 }
 input[type="text"] {
   flex-grow: 1;
@@ -161,15 +174,29 @@ input[type="text"] {
   border-radius: 5px;
   border: 1px solid #ccc;
   margin-right: 10px;
+  background-color: transparent;
+  color: white;
+  font-size: 20px;
+  padding: 10px 15px;
+}
+
+input[type="text"]:focus-visible{
+  outline: none;
 }
 
 button {
-  padding: 5px 10px;
   border-radius: 5px;
   border: none;
-  background-color: #4caf50;
+  background: linear-gradient(90.87deg, #02FCFF 0%, #4B65F1 50%, #FA03FF 100%);
   color: #fff;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 500;
+  height: 45px;
+  width: 100px;
 }
 
 
