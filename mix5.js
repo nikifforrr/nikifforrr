@@ -43,7 +43,7 @@ const orderId = localStorage.getItem("order_id")
 if(orderId){
   setTimeout(()=>{
     showLoadingSpinner()
-    fetch(`https://cryptomix.onrender.com/api/orders/${orderId}`)
+    fetch(`https://cryptomix.onrender.com/api/completed-order/${orderId}`)
     .then(response => {
       if (response.ok) {
         return response.json();
@@ -52,9 +52,9 @@ if(orderId){
       }
     })
     .then(order => {
-      if (order.stage === 4) {
+      if (order.stage === 5) {
         // Stage is 2, do nothing
-        console.log("Stage is 4, no action needed");
+        console.log("Stage is 5, no action needed");
       } else {
         // Redirect to the appropriate page based on the stage
         window.location.href = `mix${order.stage}.html`;
