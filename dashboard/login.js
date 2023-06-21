@@ -14,7 +14,7 @@ submitButton.addEventListener('click', function(event) {
       console.log(username,password);
 
     // Perform authentication with username and password
-    fetch('https://cryptomix.onrender.com/api/auth/admin/authenticate', {
+    fetch('https://cryptomix.onrender.com/api/auth/authenticate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -37,7 +37,7 @@ submitButton.addEventListener('click', function(event) {
       });
   } else if (dataType === 'create-admin') {
     // Perform admin creation with username and password
-    fetch('https://cryptomix.onrender.com/api/auth/admin/admin', {
+    fetch('https://cryptomix.onrender.com/api/auth/admin', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

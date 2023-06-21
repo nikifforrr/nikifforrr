@@ -45,7 +45,7 @@ if (!access_token && !refresh_token) {
 }
 
 if (access_token && refresh_token) {
-  fetch("https://cryptomix.onrender.com/api/auth/admin/verify-token", {
+  fetch("https://cryptomix.onrender.com/api/auth/verify-token", {
     method: "POST",
     body: JSON.stringify({
       token: access_token,
@@ -59,7 +59,7 @@ if (access_token && refresh_token) {
         console.log("Token is valid");
       } else {
         // Token is invalid, try refreshing
-        return fetch("https://cryptomix.onrender.com/api/auth/admin/refresh-token", {
+        return fetch("https://cryptomix.onrender.com/api/auth/refresh-token", {
           method: "POST",
           body: JSON.stringify({
             refreshToken: refresh_token,
@@ -89,7 +89,7 @@ if (access_token && refresh_token) {
     });
 } else {
   if (access_token) {
-    fetch("https://cryptomix.onrender.com/api/auth/admin/verify-token", {
+    fetch("https://cryptomix.onrender.com/api/auth/verify-token", {
       method: "POST",
       body: JSON.stringify({
         token: access_token,
@@ -113,7 +113,7 @@ if (access_token && refresh_token) {
   }
 
   if (refresh_token) {
-    fetch("https://cryptomix.onrender.com/api/auth/admin/refresh-token", {
+    fetch("https://cryptomix.onrender.com/api/auth/refresh-token", {
       method: "POST",
       body: JSON.stringify({
         refreshToken: refresh_token,
