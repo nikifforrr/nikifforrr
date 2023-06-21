@@ -3,66 +3,145 @@ body {
   padding: 0;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  background-color: #f5f5f5;
+  font-family: Arial, sans-serif;
 }
 
-#chatContainer {
-  width: 400px;
-  height: 600px;
-  border-radius: 10px;
-  background-color: #fff;
-  overflow-y: scroll;
+h1 {
+  margin: 20px 0;
+  text-align: center;
 }
 
-#messagesList {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  overflow-y: auto;
-}
-
-.messageBubble {
+.container {
   display: flex;
-  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 96%;
+  padding: 10px;
   margin: 10px;
 }
 
-.messageBubble.sender {
-  justify-content: flex-end;
+
+#chatContainer {
+  display: flex;
+  flex-direction: column;
+  height: 80vh;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  overflow: hidden;
+  margin: 0 10px 0 0;
+
 }
 
-.messageBubble.receiver {
-  justify-content: flex-start;
-}
-
-.messageBubble p {
-  max-width: 80%;
+/* Chat header */
+.chat-header {
+  background-color: #f5f5f5;
   padding: 10px;
-  border-radius: 20px;
-  background-color: #e2e2e2;
-  margin: 0;
-  word-wrap: break-word;
 }
 
-#inputContainer {
+.chat-header h2 {
+  margin: 0;
+}
+
+/* Chat messages */
+.chat-messages {
+  flex-grow: 1;
+  padding: 10px;
+  overflow-y: auto;
+}
+#messagesList {
+  display: grid;
+  padding: 3px;
+}
+/* Sender message container */
+.senderMessageContainer {
+  justify-self: start;
+  background-color: #e2e2e2;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  width: fit-content;
+}
+
+.senderMessageContainer p {
+  margin: 0;
+}
+
+/* Receiver message container */
+.receiverMessageContainer {
+  justify-self: end;
+  background-color: #c5ccc9;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  width: fit-content;
+
+}
+
+.receiverMessageContainer p {
+  margin: 0;
+}
+
+/* Input area */
+.input-area {
   display: flex;
   align-items: center;
-  justify-content: center;
-  margin-top: 10px;
+  padding: 10px;
+  background-color: #f5f5f5;
 }
 
-#messageInput {
-  width: 250px;
-  padding: 10px;
+.input-area input[type="text"] {
+  flex-grow: 1;
+  padding: 5px;
   border-radius: 5px;
   border: 1px solid #ccc;
+  margin-right: 10px;
 }
 
-#sendBtn {
-  margin-left: 10px;
+.input-area button {
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: none;
+  background-color: #4caf50;
+  color: #fff;
+  cursor: pointer;
+}
+
+.input-area button:hover {
+  background-color: #45a049;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.input-area button {
+  margin-top: 10px;
   padding: 10px 20px;
   border-radius: 5px;
   background-color: #4caf50;
@@ -70,31 +149,27 @@ body {
   border: none;
   cursor: pointer;
 }
+#inputContainer {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background-color: #f5f5f5;
+}
+input[type="text"] {
+  flex-grow: 1;
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin-right: 10px;
+}
 
-.senderMessageContainer p {
+button {
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: none;
   background-color: #4caf50;
-  align-self: flex-end;
-  color: #000; /* Change sender text color */
-  padding: 5px;
-  border-radius: 5px;
-  font-weight: 500;
-
+  color: #fff;
+  cursor: pointer;
 }
 
-.receiverMessageContainer p {
-  background-color: #E2E2E2;
-  align-self: flex-start;
-  color: #000;
-  padding: 5px;
-  border-radius: 5px;
-}
 
-.receiverMessageContainer {
-display: flex;
-justify-content: flex-end;
-}
-
-.senderMessageContainer {
-display: flex;
-justify-content: flex-start;
-}

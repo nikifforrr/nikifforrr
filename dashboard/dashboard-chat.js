@@ -1,3 +1,4 @@
+let room_id
 document.addEventListener('DOMContentLoaded', function() {
   const messagesList = document.getElementById('messagesList');
 
@@ -15,7 +16,6 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   socket.addEventListener('message', (event) => {
-    console.log('Received message:', event.data);
 
     try {
       let message;
@@ -23,7 +23,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const reader = new FileReader();
         reader.onload = function () {
           const text = reader.result;
-          console.log(text)
           try {
             message = JSON.parse(text);
             handleMessage(message);
@@ -44,7 +43,6 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('joinBtn').addEventListener('click', () => {
     roomId = document.getElementById('roomIdInput').value;
     if (socket.readyState === WebSocket.OPEN) {
-      console.log(roomId)
       joinChatRoom(roomId);
     } else {
       console.log('WebSocket connection is not open');
@@ -59,10 +57,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const chatMessage = {
       type: 'chatMessage',
       text: message,
-      roomId: roomId,
+      roomId: room_id,
       role:"admin"
     };
-
     // Send the chat message to the server
     socket.send(JSON.stringify(chatMessage));
 
@@ -86,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
       .then((data) => {
         if (Array.isArray(data.messages)) {
           data.messages.forEach((message) => {
-            displayMessage(message);
+            displayMessage(message.messages,message.role);
           });
         }
       })
@@ -98,15 +95,25 @@ document.addEventListener('DOMContentLoaded', function() {
   function handleMessage(message) {
     // Check the message type
     if (message.type === 'chatMessage') {
-      displayMessage(message.text);
+      displayMessage(message.text,message.role);
     }
   }
 
-  function displayMessage(message) {
-    const listItem = document.createElement('li');
-    listItem.textContent = message;
-    messagesList.appendChild(listItem);
-    console.log('Received chat message:', message);
+  function displayMessage(message,role) {
+      const messageContainer = document.createElement('div');
+      const messageText = document.createElement('p');
+      messageText.textContent = message;
+      if ( role === "admin" || role == "auto") {
+        messageContainer.className = 'senderMessageContainer';
+      } else if ( role === "user" ) {
+        messageContainer.className = 'receiverMessageContainer';
+      }
+
+      messageContainer.appendChild(messageText);
+      messagesList.appendChild(messageContainer);
+      messagesList.scrollTop = messagesList.scrollHeight; // Auto-scroll to the latest message
+    
+
   }
 
 
@@ -130,27 +137,30 @@ document.addEventListener('DOMContentLoaded', function() {
     .then(data => {
       // Process the list of active chat rooms
       const activeChatRooms = data.ChatRooms;
-      console.log(data.ChatRooms)
-      // Clear the existing list items
-      listContainer.innerHTML = '';
-      // Insert each active chat room into the list container
-      activeChatRooms.forEach((chatRoom, index) => {
-        const listItem = `
-          <li class="chat-room-item">
-            <span class="chat-room-id" data-room-id="${chatRoom}">Room ${index + 1}</span>
-          </li>
-        `;
-        listContainer.innerHTML += listItem;
-      });
-      // Add event listeners to each chat room item
-      const chatRooms = listContainer.getElementsByClassName('chat-room-item');
-      Array.from(chatRooms).forEach(item => {
-        item.addEventListener('click', () => {
-          const roomId = item.children[0].getAttribute('data-room-id');
-          joinChatRoom(roomId);
-          // Perform any other actions you want with the roomId
+      if(data.ChatRooms[0]){
+        // Clear the existing list items
+        listContainer.innerHTML = '';
+        // Insert each active chat room into the list container
+        activeChatRooms.forEach((chatRoom, index) => {
+          const listItem = `
+            <li class="chat-room-item">
+              <span class="chat-room-id" data-room-id="${chatRoom}">Room ${index + 1}</span>
+            </li>
+          `;
+          listContainer.innerHTML += listItem;
         });
-      });
+        // Add event listeners to each chat room item
+        const chatRooms = listContainer.getElementsByClassName('chat-room-item');
+        Array.from(chatRooms).forEach(item => {
+          item.addEventListener('click', () => {
+            const roomId = item.children[0].getAttribute('data-room-id');
+            joinChatRoom(roomId);
+            room_id = roomId
+            // Perform any other actions you want with the roomId
+          });
+        });
+      }
+
     })
     .catch(error => {
       console.log('Error fetching active chat rooms:', error);
@@ -159,7 +169,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-
+messageInput.addEventListener('keyup', (event) => {
+  if (event.key === 'Enter') {
+    sendBtn.click(); // Trigger click event on the send button
+  }
+});
 
 
 
