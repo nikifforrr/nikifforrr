@@ -38,8 +38,12 @@ function hideLoadingSpinner() {
 
 
 
-
 const orderId = localStorage.getItem("order_id")
+
+if(!orderId){
+  window.location.href = "./mix.html"
+}
+
 if(orderId){
   setTimeout(()=>{
     showLoadingSpinner()

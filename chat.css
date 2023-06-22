@@ -67,7 +67,7 @@ h1 {
 /* Sender message container */
 .senderMessageContainer {
   justify-self: start;
-  background-color: #e2e2e2;
+  background-color: #1f7bd7;
   padding: 10px;
   margin-bottom: 10px;
   border-radius: 5px;
@@ -81,7 +81,7 @@ h1 {
 /* Receiver message container */
 .receiverMessageContainer {
   justify-self: end;
-  background-color: #c5ccc9;
+  background-color: #2a9c41;
   padding: 10px;
   margin-bottom: 10px;
   border-radius: 5px;
@@ -92,6 +92,7 @@ h1 {
 .receiverMessageContainer p {
   margin: 0;
 }
+
 
 /* Input area */
 .input-area {

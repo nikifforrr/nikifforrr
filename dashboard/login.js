@@ -157,7 +157,7 @@ if (access_token && refresh_token) {
 const submitButton = document.querySelector('button[type="submit"]');
 submitButton.addEventListener('click', function(event) {
   event.preventDefault(); // Prevent the form submission
-
+  showLoadingSpinner()
   const selectedRadio = document.querySelector('input[name="group1"]:checked');
 
   const usernameInput = document.getElementById('usernameInput');
