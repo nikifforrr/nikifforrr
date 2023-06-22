@@ -40,6 +40,11 @@ function hideLoadingSpinner() {
 
 
 const completed_order_id = localStorage.getItem("completed_order_id") || localStorage.getItem("order_id")
+
+if(!completed_order_id){
+  showLoadingSpinner();
+  window.location.href = "./mix.html"
+}
 if(completed_order_id){
   showLoadingSpinner();
   fetch(`https://cryptomix.onrender.com/api/completed-order/${completed_order_id}`)
