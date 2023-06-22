@@ -2,6 +2,41 @@
 
 
 
+
+
+const loadingSpinner = `
+  <div class="loading-spinner-overlay">
+    <div class="loading-spinner"></div>
+  </div>
+`;
+
+
+
+function showLoadingSpinner() {
+  const spinnerElement = document.createElement('div');
+  spinnerElement.innerHTML = loadingSpinner;
+
+  const overlayElement = document.createElement('div');
+  overlayElement.classList.add('loading-overlay');
+
+  document.body.appendChild(overlayElement);
+  document.body.appendChild(spinnerElement);
+  document.body.style.overflow = 'hidden';
+}
+
+function hideLoadingSpinner() {
+  const spinnerElement = document.querySelector('.loading-spinner-overlay');
+  const overlayElement = document.querySelector('.loading-overlay');
+  if (spinnerElement && overlayElement) {
+    spinnerElement.parentNode.removeChild(spinnerElement);
+    overlayElement.parentNode.removeChild(overlayElement);
+    document.body.style.overflow = 'auto';
+  }
+}
+
+
+
+
 const howMuch = document.querySelector(".transfer span")
 
 const idInput = document.querySelector(".idInput")
@@ -12,6 +47,10 @@ const addressInput = document.querySelector(".transferAddress")
 async function checkOrderStage() {
   try {
     const orderId = localStorage.getItem("order_id");
+    if(!orderId){
+      window.location.href = "./mix.html"
+    }
+    showLoadingSpinner()
     const response = await fetch(`https://cryptomix.onrender.com/api/orders/${orderId}`);
     if (!response.ok) {
       throw new Error('Error fetching order');
@@ -44,6 +83,8 @@ async function checkOrderStage() {
 
   } catch (error) {
     console.error('Error:', error);
+  }finally {
+    hideLoadingSpinner()
   }
 }
 

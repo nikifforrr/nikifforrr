@@ -40,10 +40,14 @@ function hideLoadingSpinner() {
 
 
 const orderId = localStorage.getItem("order_id")
+if(!orderId){
+  window.location.href = "./mix.html"
+}
+
 if(orderId){
   setTimeout(()=>{
     showLoadingSpinner()
-    fetch(`https://cryptomix.onrender.com/api/orders/${orderId}`)
+    fetch(`https://cryptomix.onrender.com/api/completed-order/${orderId}`)
     .then(response => {
       if (response.ok) {
         return response.json();
