@@ -114,7 +114,7 @@ let room_id
 document.addEventListener('DOMContentLoaded', function() {
   const messagesList = document.getElementById('messagesList');
 
-  const socket = new WebSocket('ws://cryptomix.onrender.com');
+  const socket = new WebSocket('wss://cryptomix.onrender.com');
   let roomId = null;
 
   socket.addEventListener('open', () => {
