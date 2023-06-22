@@ -39,12 +39,12 @@ function hideLoadingSpinner() {
 
 
 
-const orderId = localStorage.getItem("order_id") || localStorage.getItem("completed_order_id");
+const orderId = localStorage.getItem("completed_order_id");
 
 if(!orderId){
   window.location.href = "./mix.html"
 }
-
+console.log(orderId)
 if (orderId) {
   setTimeout(() => {
     showLoadingSpinner();
@@ -64,11 +64,12 @@ if (orderId) {
         if (timeDifferenceInHours > 7) {
           localStorage.removeItem("order_id");
           localStorage.removeItem("completed_order_id");
-          window.location.href = `mix1.html`;
+          alert("this order is expires")
+          window.location.href = `./mix.html`;
         } else {
           if (order.stage === 5) {
             localStorage.removeItem("order_id");
-            localStorage.setItem("completed_order_id", orderId);
+            localStorage.removeItem("completed_order_id");
             // Stage is 2, do nothing
             console.log("Stage is 5, no action needed");
           } else {
