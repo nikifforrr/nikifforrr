@@ -130,36 +130,69 @@ function processOrder(order_id) {
 
 
 
-
-
-
-
-const order_id = localStorage.getItem("order_id")
-if(order_id){
-    showLoadingSpinner()
-    fetch(`https://cryptomix.onrender.com/api/orders/${order_id}`)
-    .then(response => {
-      if (response.ok) {
-        return response.json();
+const completed_order_id = localStorage.getItem("completed_order_id")
+if(completed_order_id){
+  showLoadingSpinner();
+  fetch(`https://cryptomix.onrender.com/api/completed-order/${completed_order_id}`)
+  .then((response) => {
+    if (response.ok) {
+      return response.json();
+    } else {
+      throw new Error('Error fetching order');
+    }
+  })
+  .then((order) => {
+    const createdAt = new Date(order.createdAt);
+    const currentTime = new Date();
+    const timeDifferenceInHours = Math.abs(currentTime - createdAt) / 36e5;
+    console.log(timeDifferenceInHours)
+    if (timeDifferenceInHours > 7) {
+      localStorage.removeItem("order_id");
+      localStorage.removeItem("completed_order_id");
+      alert("This order has expired");
+      window.location.href = `./mix.html`;
+    } else {
+      if (order.stage === 5) {
+        localStorage.removeItem("order_id");
+        localStorage.removeItem("completed_order_id");
+        // Stage is 5, no action needed
+        window.location.href = `mix${order.stage}.html`;
+        console.log("Stage is 5, no action needed");
       } else {
-        throw new Error('Error fetching order');
-      }
-    })
-    .then(order => {
         // Redirect to the appropriate page based on the stage
-        localStorage.removeItem("waiting_list_id")
+        window.location.href = `mix${order.stage}.html`;
+      }
+    } 
+  })
+  .catch((error) => {
+    console.error(error);
+    // Handle the error and try an alternative fetch request
+    fetch(`https://cryptomix.onrender.com/api/orders/${completed_order_id}`)
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error('Error fetching order');
+        }
+      })
+      .then((order) => {
+        // Redirect to the appropriate page based on the stage
+        localStorage.removeItem("waiting_list_id");
         window.location.href = `./mix${order.stage}.html`;
-    })
-    .catch(error => {
-      console.error(error);
-    }).finally(()=>{
-      hideLoadingSpinner()
-    })
-}else{
-  const waiting_list_id = localStorage.getItem("waiting_list_id")
-  if(waiting_list_id){
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+  })
+  .finally(() => {
+    hideLoadingSpinner();
+  });
+
+}else {
+  const order_id = localStorage.getItem("order_id")
+  if(order_id){
       showLoadingSpinner()
-      fetch(`https://cryptomix.onrender.com/api/orders/${waiting_list_id}`)
+      fetch(`https://cryptomix.onrender.com/api/orders/${order_id}`)
       .then(response => {
         if (response.ok) {
           return response.json();
@@ -169,8 +202,7 @@ if(order_id){
       })
       .then(order => {
           // Redirect to the appropriate page based on the stage
-          localStorage.removeItem("waiting_list_id");
-          localStorage.setItem("order_id",order._id)
+          localStorage.removeItem("waiting_list_id")
           window.location.href = `./mix${order.stage}.html`;
       })
       .catch(error => {
@@ -178,13 +210,33 @@ if(order_id){
       }).finally(()=>{
         hideLoadingSpinner()
       })
+  }else{
+    const waiting_list_id = localStorage.getItem("waiting_list_id")
+    if(waiting_list_id){
+        showLoadingSpinner()
+        fetch(`https://cryptomix.onrender.com/api/orders/${waiting_list_id}`)
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error('Error fetching order');
+          }
+        })
+        .then(order => {
+            // Redirect to the appropriate page based on the stage
+            localStorage.removeItem("waiting_list_id");
+            localStorage.setItem("order_id",order._id)
+            window.location.href = `./mix${order.stage}.html`;
+        })
+        .catch(error => {
+          console.error(error);
+        }).finally(()=>{
+          hideLoadingSpinner()
+        })
+    }
+    
   }
-  
 }
-
-
-
-
 
 
 

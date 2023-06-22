@@ -44,13 +44,14 @@ const urlInput = document.querySelector(".urlInput")
 const addressInput = document.querySelector(".transferAddress")
 
 
+const orderId = localStorage.getItem("order_id");
 async function checkOrderStage() {
+  showLoadingSpinner()
+setTimeout(async () => {
   try {
-    const orderId = localStorage.getItem("order_id");
     if(!orderId){
       window.location.href = "./mix.html"
     }
-    showLoadingSpinner()
     const response = await fetch(`https://cryptomix.onrender.com/api/orders/${orderId}`);
     if (!response.ok) {
       throw new Error('Error fetching order');
@@ -86,6 +87,8 @@ async function checkOrderStage() {
   }finally {
     hideLoadingSpinner()
   }
+}, 200);
+
 }
 
 checkOrderStage();
