@@ -939,6 +939,13 @@ function isValidUSDcoinAddress(address) {
 
 
 
+const overlay = document.getElementById('overlay');
+
+overlay.addEventListener('click', function(event) {
+  if(submitButton.hasAttribute("disabled")){
+    alert('Addresses or Amount Is Not Valid. Please Check Them Out.');
+  }
+});
 
 
 
@@ -959,16 +966,13 @@ function setSelectedCurrency(value) {
   window.dispatchEvent(currencyChangeEvent);
 }
 
-window.addEventListener("currencyChange", (event) => {
-  const { selectedCurrency } = event.detail;
-  // Handle the selectedCurrency change here
-  console.log("Selected currency changed:", selectedCurrency);
-  validateInputs();
-});
-function validateInputs(){
-  validateAddress()
-  validateAmount()
-}
+// window.addEventListener("currencyChange", (event) => {
+//   const { selectedCurrency } = event.detail;
+//   // Handle the selectedCurrency change here
+//   console.log("Selected currency changed:", selectedCurrency);
+//   validateInputs();
+// });
+
 
 
 function validateAddress() {
@@ -994,7 +998,6 @@ function validateAddress() {
       }
     }
   });
-
   return isValidAddress;
 }
 
@@ -1008,13 +1011,19 @@ function validateAmount() {
 
   const amount = parseFloat(amountInput.value);
   const currencyRange = currencyRanges[selectedCurrency];
+
   return amount >= currencyRange.min && amount <= currencyRange.max;
 }
 
 function updateSubmitButtonState() {
   const isValidAddress = validateAddress();
   const isValidAmount = validateAmount();
+  if((isValidAddress && isValidAmount)){
+    overlay.style.display = "none"
+  }else {
+    overlay.style.display = "block"
 
+  }
   submitButton.disabled = !(isValidAddress && isValidAmount);
 }
 
