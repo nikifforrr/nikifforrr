@@ -69,7 +69,6 @@ if (orderId) {
         } else {
           if (order.stage === 5) {
             localStorage.removeItem("order_id");
-            localStorage.removeItem("completed_order_id");
             // Stage is 2, do nothing
             console.log("Stage is 5, no action needed");
           } else {
