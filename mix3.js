@@ -94,6 +94,7 @@ setTimeout(async () => {
 checkOrderStage();
 
 setInterval(()=>{
+  console.log("yes")
   if(order.stage==4){
     checkOrderStage()
   }
