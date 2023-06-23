@@ -132,9 +132,11 @@ if(completed_order_id){
   }
 }
 
+const orderId = localStorage.getItem("order_id");
+
 
 setInterval(async function(){
-  const response = await fetch(`https://cryptomix.onrender.com/api/orders/${orderId}`);
+  const response = fetch(`https://cryptomix.onrender.com/api/completed-order/${completed_order_id}`)
   const order = await response.json();
   console.log("yes")
   if(order.stage==5){
