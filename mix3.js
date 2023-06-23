@@ -93,6 +93,12 @@ setTimeout(async () => {
 
 checkOrderStage();
 
+setInterval(()=>{
+  if(order.stage==4){
+    checkOrderStage()
+  }
+},5000)
+
 const copyBtns = document.querySelectorAll(".copy")
 
 copyBtns[0].addEventListener("click", ()=>{
