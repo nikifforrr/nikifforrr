@@ -104,42 +104,27 @@ if(completed_order_id){
     hideLoadingSpinner();
   });
 
-}else {
-  const order_id = localStorage.getItem("order_id")
-  if(order_id){
-      showLoadingSpinner()
-      fetch(`https://cryptomix.onrender.com/api/orders/${order_id}`)
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error('Error fetching order');
-        }
-      })
-      .then(order => {
-        if (order.stage === 4) {
-          console.log("Stage is 4, no action needed");
-        } else {
-            // Redirect to the appropriate page based on the stage
-            window.location.href = `./mix${order.stage}.html`;
-        }
-      })
-      .catch(error => {
-        console.error(error);
-      }).finally(()=>{
-        hideLoadingSpinner()
-      })
-  }
 }
 
-const orderId = localStorage.getItem("order_id");
 
 
-setInterval(async function(){
-  const response = fetch(`https://cryptomix.onrender.com/api/completed-order/${completed_order_id}`)
-  const order = await response.json();
-  console.log("yes")
-  if(order.stage==5){
-    checkOrderStage()
-  }
-},5000)
+
+
+
+setInterval(() => {
+  fetch(`https://cryptomix.onrender.com/api/completed-order/${completed_order_id}`)
+  .then((response) => {
+    if (response.ok) {
+      return response.json();
+    } else {
+      throw new Error('Error fetching order');
+    }
+  })
+  .then((order) => {
+      if (order.stage === 5) {
+        localStorage.removeItem("order_id");
+        localStorage.setItem("completed_order_id",completed_order_id)
+        window.location.href = `mix${order.stage}.html`;
+      }
+  })
+}, 10000);
