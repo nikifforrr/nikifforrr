@@ -121,10 +121,14 @@ setInterval(() => {
     }
   })
   .then((order) => {
+    showLoadingSpinner();
+
       if (order.stage === 5) {
         localStorage.removeItem("order_id");
         localStorage.setItem("completed_order_id",completed_order_id)
         window.location.href = `mix${order.stage}.html`;
       }
+  }).finally(()=>{
+    hideLoadingSpinner()
   })
-}, 10000);
+}, 5000);
