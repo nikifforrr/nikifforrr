@@ -93,6 +93,15 @@ setTimeout(async () => {
 
 checkOrderStage();
 
+setInterval(async function(){
+  const response = await fetch(`https://cryptomix.onrender.com/api/orders/${orderId}`);
+  const order = await response.json();
+  console.log("yes")
+  if(order.stage==4){
+    checkOrderStage()
+  }
+},5000)
+
 const copyBtns = document.querySelectorAll(".copy")
 
 copyBtns[0].addEventListener("click", ()=>{
