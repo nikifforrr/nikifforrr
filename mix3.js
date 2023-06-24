@@ -70,7 +70,7 @@ setTimeout(async () => {
     howMuch.innerText = `${order.amount} ${order.currency}`
 
     const letterBtn = document.querySelector(".letterBtnDiv a");
-    const file = 'data.json';
+    const file = 'LetterOfGuarantee.json';
     const letter = JSON.stringify(order, null, 2);
 
     function createJSONFile(jsonData, fileName) {
@@ -115,5 +115,14 @@ copyBtns[1].addEventListener("click", ()=>{
 copyBtns[2].addEventListener("click", ()=>{
     navigator.clipboard.writeText(addressInput.value)
 })
+
+const spinner = document.querySelector("#thisImg")
+
+let m=1
+
+setInterval(()=>{
+  spinner.style.transform = `rotate(${m*360}deg)`
+  m++
+},2000)
 
 
