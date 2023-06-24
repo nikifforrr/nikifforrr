@@ -89,6 +89,9 @@ console.log(openChat)
 // Print the retrieved values
 
 openChat.addEventListener("click",(e)=>{
+    if(isRobot){
+        return
+    }
     // Get the input values
     const subjectSelect = document.querySelector('.contact-selected');
     const letterNameInput = document.querySelector('.letterName');
@@ -175,3 +178,19 @@ openChat.addEventListener("click",(e)=>{
   mixBtns[2].addEventListener("click", ()=>{
     localStorage.setItem("mix", 2)
   })
+
+  const captcha = document.querySelector("#captcha")
+
+  let isRobot = true
+
+  captcha.addEventListener("click", (e)=>{
+    e.preventDefault();
+    grecaptcha.enterprise.ready(async () => {
+      const token = await grecaptcha.enterprise.execute('6LcrgMcmAAAAAAtz9bolTFcbRd_DbaUCLTVcGnXW', {action: 'LOGIN'});
+      isRobot = false
+      // IMPORTANT: The 'token' that results from execute is an encrypted response sent by
+      // reCAPTCHA Enterprise to the end user's browser.
+      // This token must be validated by creating an assessment.
+      // See https://cloud.google.com/recaptcha-enterprise/docs/create-assessment
+    });
+})
