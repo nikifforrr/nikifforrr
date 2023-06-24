@@ -132,3 +132,13 @@ setInterval(() => {
     hideLoadingSpinner()
   })
 }, 5000);
+
+
+const greenLoad = document.querySelector(".washAbs img")
+
+let m=1
+
+setInterval(()=>{
+  greenLoad.style.transform = `rotate(${m*360}deg)`
+  m++
+},2000)
