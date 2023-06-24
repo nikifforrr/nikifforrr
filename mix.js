@@ -267,6 +267,8 @@ x.addEventListener("click", () => {
     dropdown.style.display = "none"
 })
 
+
+
 options[0].addEventListener("click", () => {
     selectedImg.src = "img/btc.svg"
     selectedName.innerText = "BTC"
@@ -294,6 +296,31 @@ options[3].addEventListener("click", () => {
     setSelectedCurrency("USD Coin (Ethereum)");
     bounds.innerText = "You can mix between 20 and 1000000 USD Coin"
 })
+
+if(!(localStorage.getItem("mix")==null)){
+  let num = localStorage.getItem("mix")
+
+  if(num==0){
+    selectedImg.src = "img/ether.svg"
+    selectedName.innerText = "ETH"
+    setSelectedCurrency("Ethereum");
+    bounds.innerText = "You can mix between 0.015 and 500 ETH"
+  }
+
+  else if(num==1){
+    selectedImg.src = "img/btc.svg"
+    selectedName.innerText = "BTC"
+    setSelectedCurrency("Bitcoin");
+    bounds.innerText = "You can mix between 0.00076 and 35 BTC"
+  }
+
+  else if(num==2){
+    selectedImg.src = "img/tether.svg"
+    selectedName.innerText = "TETHER"
+    setSelectedCurrency("Tether");
+    bounds.innerText = "You can mix between 20 and 1000000 TETHER"
+  }
+}
 
 
 
