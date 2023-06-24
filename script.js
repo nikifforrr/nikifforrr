@@ -114,3 +114,64 @@ openChat.addEventListener("click",(e)=>{
     window.location.href = userData;
     
   })
+
+
+  const leftHome = document.querySelector(".leftHome")
+
+  const rightHome = document.querySelector(".rightHome")
+
+  window.addEventListener("load", ()=>{
+    leftHome.style.opacity = "1"
+    leftHome.style.transform = "translate(0)"
+    rightHome.style.opacity = "1"
+  })
+
+  const gridItems = document.querySelectorAll(".grid-item")
+  const works = document.querySelectorAll(".works")
+
+  window.addEventListener("scroll", ()=>{
+    const scrolled = window.scrollY
+
+    if(scrolled>600){
+        for(let i=0; i<3; i++){
+            gridItems[i].style.opacity = "1"
+            gridItems[i].style.transform = "translateY(0)"
+        }
+    }
+
+    if(scrolled>800){
+        for(let i=3; i<6; i++){
+            gridItems[i].style.opacity = "1"
+            gridItems[i].style.transform = "translateY(0)"
+        }
+    }
+
+    if(scrolled>1450){
+        for(let i=0; i<3; i++){
+            works[i].style.opacity = "1"
+            works[i].style.transform = "translate(0)"
+        }
+    }
+
+    if(scrolled>1650){
+        for(let i=3; i<5; i++){
+            works[i].style.opacity = "1"
+            works[i].style.transform = "translate(0)"
+        }
+    }
+
+  })
+
+  const mixBtns = document.querySelectorAll(".leftHome4>a")
+
+  mixBtns[0].addEventListener("click", ()=>{
+    localStorage.setItem("mix", 0)
+  })
+
+  mixBtns[1].addEventListener("click", ()=>{
+    localStorage.setItem("mix", 1)
+  })
+
+  mixBtns[2].addEventListener("click", ()=>{
+    localStorage.setItem("mix", 2)
+  })
