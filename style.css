@@ -132,6 +132,10 @@ header {
     flex-direction: column;
     gap: 30px;
     color: white;
+    transform: translate(300px);
+    opacity: 0;
+    transition: 1s all ease;
+
 }
 
 .leftHome1 {
@@ -224,6 +228,8 @@ header {
     align-items: center;
     justify-content: center;
     width: 50%;
+    opacity: 0;
+    transition: 1s all ease;
 }
 
 .rightHome img {
@@ -303,6 +309,10 @@ header {
     width: 90%;
     position: relative;
     height: 114px;
+    align-items: center;
+    transform: translateY(300px);
+    opacity: 0;
+    transition: 1s all ease;
 }
 
 .gridBG {
@@ -338,7 +348,7 @@ header {
 
 .grid-item-right h6 {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 22px;
+    font-size: 23px;
     font-weight: 600;
 }
 
@@ -347,7 +357,7 @@ header {
     font-size: 18px;
     font-weight: 400;
     color: rgba(191, 191, 202, 1);
-    margin-left: -14px;
+    text-align: left;
 }
 
 
@@ -376,6 +386,7 @@ header {
     gap: 40px;
     color: white;
     padding-top: 200px;
+    overflow: hidden;
 }
 
 .works-container>div:nth-child(1) {
@@ -415,6 +426,24 @@ header {
     max-width: 477px;
     width: 33%;
     min-height: 268px;
+    transition: 1s all ease;
+    opacity: 0;
+}
+
+.threeWorks>.works:nth-child(1){
+    transform: translateX(-300px);
+}
+
+.threeWorks>.works:nth-child(2){
+    transform: translateY(300px);
+}
+
+.threeWorks>.works:nth-child(3){
+    transform: translateX(300px);
+}
+
+.twoWorks .works{
+    transform: translateY(300px);
 }
 
 .works-img {
@@ -426,8 +455,8 @@ header {
 
 .works-text {
     position: absolute;
-    bottom: 60px;
-    left: 110px;
+    bottom: 65px;
+    left: 105px;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -435,9 +464,17 @@ header {
     max-width: 300px;
 }
 
+.works:nth-child(n+3)>.works-text{
+    bottom: 45px;
+}
+
+.twoWorks .works>.works-text{
+    bottom: 45px;
+}
+
 .works-text>h6 {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 18.5px;
+    font-size: 24px;
     font-weight: 600;
 }
 
@@ -1333,6 +1370,26 @@ input:focus-visible {
     border-radius: 12px;
 }
 
+.addresses>.address:nth-child(2) .amount-distribution{
+    background: linear-gradient(0deg, #4B65F1, #4B65F1);
+
+}
+
+.addresses>.address:nth-child(3) .amount-distribution{
+    background: linear-gradient(0deg, #FA03FF, #FA03FF);
+
+}
+
+.addresses>.address:nth-child(4) .amount-distribution{
+    background: linear-gradient(0deg, #4B65F1, #4B65F1);
+
+}
+
+.addresses>.address:nth-child(5) .amount-distribution{
+    background: linear-gradient(0deg, #08D1D3, #08D1D3);
+
+}
+
 .addressInput {
     width: 100%;
     border: 1px solid rgba(62, 62, 114, 1);
@@ -1529,6 +1586,11 @@ input:focus-visible {
     letter-spacing: 2%;
 }
 
+.term a{
+    text-decoration: underline;
+    color: white;
+}
+
 .term>p span {
     color: white;
     font-weight: 600;
@@ -1655,6 +1717,10 @@ input{
     font-family: 'SF Pro Display', sans-serif;
 }
 
+#thisImg{
+    transition: 2s all linear;
+}
+
 
 
 /* Form Step 4 */
@@ -1681,6 +1747,7 @@ input{
 .wash2{
     margin-top: -120px;
     margin-bottom: 30px;
+    position: relative;
 }
 
 .anyQ{
@@ -1709,6 +1776,22 @@ input{
     height: 78px;
     color: white;
     border-radius: 16px;
+}
+
+.washAbs{
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    left: 570px;
+    top: 0px;
+    z-index: 300;
+    background-color: #040337;
+    width: 63px;
+}
+
+.washAbs img{
+    transition: 2s all linear;
 }
 
 
@@ -1934,10 +2017,11 @@ input{
         gap:25px;
         width: 85%;
         height: 74px;
+        opacity: 0;
+        transform: translate(0);
     }
     .grid-item-right{
         gap: 5px;
-        align-items: center;
     }
     .grid-item-right h6{
         font-size: 15px;
@@ -1965,12 +2049,26 @@ input{
     .twoWorks{
         margin-top: -40px;
     }
+
+    .twoWorks .works> .works-text{
+        bottom: 40px;
+    }
+
+    .threeWorks .works> .works-text{
+        bottom: 40px;
+    }
+
+    .threeWorks .works:nth-child(1)> .works-text{
+        bottom: 50px;
+    }
     .works{
         width: 100%;
         text-align: left;
         min-height: 180px;
         display: flex;
         justify-content: center;
+        opacity: 1;
+        transform: translate(0);
     }
     .works-text{
         width: 180px;
