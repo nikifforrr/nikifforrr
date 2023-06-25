@@ -9,6 +9,7 @@ const questions = document.querySelectorAll(".question")
 const arrows = document.querySelectorAll(".question1 div img")
 const expanditures = document.querySelectorAll(".question2")
 const texts = document.querySelectorAll(".question1>div:nth-child(1)")
+const header = document.querySelector("header")
 
 let opened =-1
 
@@ -134,6 +135,16 @@ openChat.addEventListener("click",(e)=>{
 
   window.addEventListener("scroll", ()=>{
     const scrolled = window.scrollY
+
+    if(scrolled>50){
+        header.style.position = "fixed"
+        header.style.background = "#020236"
+    }
+    else{
+        header.style.position = "relative"
+        header.style.background = "transparent"
+        header.style.zIndex = "100"
+    }
 
     if(scrolled>600){
         for(let i=0; i<3; i++){
