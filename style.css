@@ -63,7 +63,6 @@ header {
     left: 0;
     top: 0;
     right: 0;
-    margin-bottom:100px;
 }
 
 .header-container {
@@ -122,12 +121,13 @@ header {
 
 #home {
     width: 100%;
+    margin-bottom: 200px;
 }
 
 .home-container {
     display: flex;
     justify-content: center;
-    padding-top: 100px;
+    padding-top: 130px;
 }
 
 .leftHome {
@@ -139,6 +139,7 @@ header {
     transform: translate(300px);
     opacity: 0;
     transition: 1s all ease;
+    padding-top: 0px;
 
 }
 
@@ -148,7 +149,7 @@ header {
 }
 
 .leftHome1 img {
-    width: 75%;
+    width: 100%;
 }
 
 .leftHome2 {
@@ -159,7 +160,7 @@ header {
 }
 
 .leftHome3 {
-    font-size: 18px;
+    font-size: 24px;
     line-height: 31.2px;
     gap: 30px;
     display: flex;
@@ -167,7 +168,7 @@ header {
     font-weight: 500;
     font-family: 'SF Pro Display',
         sans-serif;
-
+    width: 90%;
 }
 
 .leftHome4 {
@@ -238,8 +239,8 @@ header {
 
 .rightHome img {
     max-width: 560px;
-    margin-top: -50px;
-    margin-left: 50px;
+    margin-top: -30px;
+    margin-right: -150px;
 }
 
 .snake {
