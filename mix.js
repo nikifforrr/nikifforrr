@@ -5,7 +5,8 @@
 const loadingSpinner = `
   <div class="loading-spinner-overlay">
     <div>
-      <img id="loader" src="./img/spinner.svg">
+      <img id="loader" src="./img/loading.png">
+      <div>Loading...</div>
     </div>
   </div>
 `;
