@@ -36,7 +36,7 @@ function showLoadingSpinner() {
 
 
   setInterval(() => {
-    loader.style.transform = `rotate(${360}deg)`
+    loader.style.transform = `rotate(${s*360}deg)`
     s++
   }, 2000)
   },10)
