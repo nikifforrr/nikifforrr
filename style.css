@@ -263,9 +263,9 @@ header {
 
 .homeball{
     position: absolute;
-    top: -90px;
+    top: 30px;
     width: 700px;
-    right: 100px;
+    right: 160px;
     z-index: -1;
     filter: blur(30px);
 }
