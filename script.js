@@ -146,28 +146,28 @@ openChat.addEventListener("click",(e)=>{
         header.style.zIndex = "100"
     }
 
-    if(scrolled>600){
+    if(scrolled>550){
         for(let i=0; i<3; i++){
             gridItems[i].style.opacity = "1"
             gridItems[i].style.transform = "translateY(0)"
         }
     }
 
-    if(scrolled>800){
+    if(scrolled>700){
         for(let i=3; i<6; i++){
             gridItems[i].style.opacity = "1"
             gridItems[i].style.transform = "translateY(0)"
         }
     }
 
-    if(scrolled>1450){
+    if(scrolled>1350){
         for(let i=0; i<3; i++){
             works[i].style.opacity = "1"
             works[i].style.transform = "translate(0)"
         }
     }
 
-    if(scrolled>1650){
+    if(scrolled>1550){
         for(let i=3; i<5; i++){
             works[i].style.opacity = "1"
             works[i].style.transform = "translate(0)"
