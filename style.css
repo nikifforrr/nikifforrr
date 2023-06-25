@@ -60,6 +60,9 @@ p {
 
 header {
     width: 100%;
+    left: 0;
+    top: 0;
+    right: 0;
 }
 
 .header-container {
@@ -744,11 +747,15 @@ header {
     flex-direction: column;
     gap: 10px;
     width: 100%;
+    align-items: center;
 }
 
 .contact-div h6{
     font-weight: 500;
     font-size: 20px;
+    width: 70%;
+    justify-content: left;
+    text-align: left;
 }
 
 .contact-selector-div{
@@ -759,7 +766,7 @@ header {
     flex-direction: column;
     justify-content: center;
     position: relative;
-    width: 100%;
+    width: 70%;
     border-radius: 16px;
     cursor: pointer;
 }
@@ -796,7 +803,7 @@ header {
     display: flex;
     align-items: center;
     padding: 0 20px;
-    width: 98%;
+    width: 89%;
     border-radius: 16px;
     padding-right: 0;
 }
@@ -810,6 +817,7 @@ header {
     align-items: center;
     width: 100%;
     border-radius: 16px;
+    justify-content: center;
 }
 
 .nameInput{
@@ -819,7 +827,7 @@ header {
     padding: 0 110px 0 20px;
     border-radius: 16px;
     margin-right: -165px;
-    width: 90%;
+    width: 61%;
     font-family: 'SF Pro Display', sans-serif;
     font-size: 18px;
     font-weight: 400;
@@ -837,7 +845,7 @@ header {
     padding: 0 110px 0 20px;
     border-radius: 16px;
     margin-right: -165px;
-    width: 90%;
+    width: 61%;
     font-family: 'SF Pro Display', sans-serif;
     font-size: 18px;
     font-weight: 400;
@@ -858,7 +866,7 @@ header {
 .contact-div textarea{
     border: 1px solid rgba(62, 62, 114, 1);
     height: 150px;
-    width: 98.5%;
+    width: 69%;
     border-radius: 24px;
     background-color: transparent;
     resize: none;
@@ -867,6 +875,12 @@ header {
     font-weight: 400;
     color: white;
     padding: 20px 0 0 20px;
+}
+
+div:has(textarea){
+    width: 100%;
+    display: flex;
+    justify-content: center;
 }
 
 textarea::placeholder, .nameInput::placeholder{
@@ -879,7 +893,7 @@ textarea:focus-visible{
 
 .last-contact-div{
     display: flex;
-    width: 100%;
+    width: 70%;
     align-items: center;
     justify-content: space-between;
 }
@@ -2525,6 +2539,16 @@ input{
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.loading-spinner-overlay>div{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    font-size: 18px;
+    font-weight: 500;
+    color: white;
+    font-family: 'SF Pro Display', sans-serif;
 }
 
 .loading-spinner {
