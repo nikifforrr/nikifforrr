@@ -249,7 +249,7 @@ header {
     top: 0;
     width: 1320px;
     z-index: -2;
-    filter: blur(30px);
+    filter: blur(50px);
     backdrop-filter: blur(16px);
 }
 
@@ -675,6 +675,8 @@ header {
     max-width: 1076px;
     position: relative;
     cursor: pointer;
+    justify-content: center;
+    height: 70px;
 }
 
 .qBg {
