@@ -810,11 +810,10 @@ header {
 
 .contact-option{
     height: 78px;
-    width: 100%;
     display: flex;
     align-items: center;
     padding: 0 20px;
-    width: 89%;
+    width: 97.7%;
     border-radius: 16px;
     padding-right: 0;
 }
