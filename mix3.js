@@ -121,10 +121,21 @@ setTimeout(async () => {
 showLoadingSpinner()
 checkOrderStage();
 
-setInterval(async function(){
-  checkOrderStage()
-},5000)
 
+const eventSource = new EventSource(`https://cryptomix.onrender.com/api/orders/sse/${orderId}`);
+
+// Event listener for SSE updates
+eventSource.addEventListener("message", (event) => {
+  const eventData = JSON.parse(event.data);
+  if(eventData.stage === 4){
+    window.location.href = './mix4.html'
+  }
+});
+
+// Event listener for SSE connection error
+eventSource.addEventListener("error", (error) => {
+  console.error("SSE connection error:", error);
+});
 const copyBtns = document.querySelectorAll(".copy")
 
 copyBtns[0].addEventListener("click", ()=>{

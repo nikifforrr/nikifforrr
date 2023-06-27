@@ -133,29 +133,18 @@ if(completed_order_id){
 
 
 
+const eventSource = new EventSource(`https://cryptomix.onrender.com/api/orders/sse/${completed_order_id}`);
 
+// Event listener for SSE updates
+eventSource.addEventListener("message", (event) => {
+  const eventData = JSON.parse(event.data);
+  if(eventData.stage === 5){
+    localStorage.removeItem("order_id");
+    localStorage.setItem("completed_order_id",completed_order_id)
+    window.location.href = './mix5.html'
+  }
+});
 
-setInterval(() => {
-  fetch(`https://cryptomix.onrender.com/api/completed-order/${completed_order_id}`)
-  .then((response) => {
-    if (response.ok) {
-      return response.json();
-    } else {
-      throw new Error('Error fetching order');
-    }
-  })
-  .then((order) => {
-    showLoadingSpinner();
-
-      if (order.stage === 5) {
-        localStorage.removeItem("order_id");
-        localStorage.setItem("completed_order_id",completed_order_id)
-        window.location.href = `mix${order.stage}.html`;
-      }
-  }).finally(()=>{
-    hideLoadingSpinner()
-  })
-}, 5000);
 
 
 const greenLoad = document.querySelector(".washAbs img")
