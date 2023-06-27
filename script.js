@@ -19,6 +19,7 @@ for(let i=0; i<questions.length; i++){
             arrows[i].src = "img/linearuparrow.svg"
             expanditures[i].style.display = "flex"
             texts[i].classList.add("colors")
+            texts[i].style.fontWeight = "500"
 
             arrows[opened].src = "img/down-arrow.svg"
             expanditures[opened].style.display = "none"
@@ -29,6 +30,7 @@ for(let i=0; i<questions.length; i++){
             arrows[i].src = "img/linearuparrow.svg"
             expanditures[i].style.display = "flex"
             texts[i].classList.add("colors")
+            texts[i].style.fontWeight = "700"
         }
 
         if(opened==i){
