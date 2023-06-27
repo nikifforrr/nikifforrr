@@ -72,7 +72,7 @@ if(!orderId){
   window.location.href = "./mix.html"
 }
 async function checkOrderStage() {
-  showLoadingSpinner()
+
 setTimeout(async () => {
   fetch(`https://cryptomix.onrender.com/api/orders/${orderId}`)
   .then(response => {
@@ -118,16 +118,11 @@ setTimeout(async () => {
 }, 200);
 
 }
-
+showLoadingSpinner()
 checkOrderStage();
 
 setInterval(async function(){
-  const response = await fetch(`https://cryptomix.onrender.com/api/orders/${orderId}`);
-  const order = await response.json();
-  console.log("yes")
-  if(order.stage==4){
-    checkOrderStage()
-  }
+  checkOrderStage()
 },5000)
 
 const copyBtns = document.querySelectorAll(".copy")
