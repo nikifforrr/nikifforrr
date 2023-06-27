@@ -44,7 +44,6 @@ const orderId = localStorage.getItem("completed_order_id");
 if(!orderId){
   window.location.href = "./mix.html"
 }
-console.log(orderId)
 if (orderId) {
   setTimeout(() => {
     showLoadingSpinner();
