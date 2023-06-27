@@ -121,7 +121,7 @@ if(completed_order_id){
         }
       })
       .catch((error) => {
-        console.error(error);
+        alert("ops, something went wrong please refresh this page")
       })
   })
   .finally(() => {
