@@ -1127,6 +1127,7 @@ footer {
     border-radius: 16px;
     letter-spacing: 1px;
     max-width: 1088px;
+    margin-top: -20px;
 }
 
 .alert>p:nth-child(2)>span {
