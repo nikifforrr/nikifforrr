@@ -104,7 +104,9 @@ if(completed_order_id){
   .catch((error) => {
     console.error(error);
     // Handle the error and try an alternative fetch request
-    fetch(`https://cryptomix.onrender.com/api/orders/${completed_order_id}`)
+    showLoadingSpinner();
+    setTimeout(() => {
+      fetch(`https://cryptomix.onrender.com/api/orders/${completed_order_id}`)
       .then((response) => {
         if (response.ok) {
           return response.json();
@@ -122,7 +124,10 @@ if(completed_order_id){
       })
       .catch((error) => {
         alert("ops, something went wrong please refresh this page")
+      }).finally(()=>{
+        hideLoadingSpinner()
       })
+    }, 1000);
   })
   .finally(() => {
     hideLoadingSpinner();

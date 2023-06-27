@@ -188,8 +188,9 @@ if (completed_order_id) {
     .catch((error) => {
       console.error(error);
       // Handle the error and try an alternative fetch request
-      showLoadingSpinner()
-      fetch(`https://cryptomix.onrender.com/api/orders/${completed_order_id}`)
+      showLoadingSpinner();
+      setTimeout(() => {
+        fetch(`https://cryptomix.onrender.com/api/orders/${completed_order_id}`)
         .then((response) => {
           if (response.ok) {
             return response.json();
@@ -208,6 +209,8 @@ if (completed_order_id) {
         }).finally(() => {
           hideLoadingSpinner();
         })
+      }, 500);
+
     })
     .finally(() => {
       hideLoadingSpinner();
@@ -1196,7 +1199,6 @@ submitButton.addEventListener("click", async () => {
       }else {
         alert("ops error happened please try again")
       }
-  
       submitButton.disabled = false; // Enable the button after the fetch request completes
       hideLoadingSpinner();
     })
