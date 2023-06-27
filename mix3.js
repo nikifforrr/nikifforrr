@@ -74,15 +74,16 @@ if(!orderId){
 async function checkOrderStage() {
   showLoadingSpinner()
 setTimeout(async () => {
-  try {
-    const response = await fetch(`https://cryptomix.onrender.com/api/orders/${orderId}`);
+  fetch(`https://cryptomix.onrender.com/api/orders/${orderId}`)
+  .then(response => {
     if (!response.ok) {
       throw new Error('Error fetching order');
-    }else if(response.status(404)){
-      localStorage.removeItem("order_id")
+    } else if (response.status === 404) {
+      localStorage.removeItem("order_id");
     }
-    const order = await response.json();
-
+    return response.json();
+  })
+  .then(order => {
     if (order.stage === 3) {
       console.log("Stage is 3, no action needed");
     } else {
@@ -90,9 +91,9 @@ setTimeout(async () => {
     }
 
     idInput.value = orderId;
-    urlInput.value = `https://mix.guru/mix.html?order_id=${order._id}`; // need to change 
+    urlInput.value = `https://mix.guru/mix.html?order_id=${order._id}`; // need to change
     addressInput.value = order.receive_wallet_address;
-    howMuch.innerText = `${order.amount} ${order.currency}`
+    howMuch.innerText = `${order.amount} ${order.currency}`;
 
     const letterBtn = document.querySelector(".letterBtnDiv a");
     const file = 'LetterOfGuarantee.json';
@@ -107,11 +108,13 @@ setTimeout(async () => {
 
     createJSONFile(letter, file);
 
-  } catch (error) {
+    hideLoadingSpinner();
+  })
+  .catch(error => {
     console.error('Error:', error);
-  }finally {
-    hideLoadingSpinner()
-  }
+    hideLoadingSpinner();
+  });
+
 }, 200);
 
 }

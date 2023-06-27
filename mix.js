@@ -1175,32 +1175,37 @@ submitButton.addEventListener("click", async () => {
     currency: selectedCurrency,
     wallet_percentage_address: walletAddresses
   };
-  try {
-    const response = await fetch('https://cryptomix.onrender.com/api/orders/create', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(order)
+  fetch('https://cryptomix.onrender.com/api/orders/create', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(order)
+  })
+    .then(response => response.json())
+    .then(data => {
+      if (data.message) {
+        const baseUrl = 'https://mix.guru';
+        const waitingId = data.message._id;
+        const url = `${baseUrl}?waiting=${waitingId}`;
+        localStorage.setItem('waiting_list_id', waitingId);
+        showDialog(url, "hi");
+      } else if(data._id) {
+        localStorage.setItem('order_id', data._id);
+        window.location.href = `./mix${data.stage}.html`;
+      }else {
+        alert("ops error happened please try again")
+      }
+  
+      submitButton.disabled = false; // Enable the button after the fetch request completes
+      hideLoadingSpinner();
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      // Handle any errors that occurred during the request
+  
+      submitButton.disabled = false; // Enable the button after the fetch request completes
+      hideLoadingSpinner();
     });
-
-    const data = await response.json();
-
-    if (data.message) {
-      const baseUrl = 'https://mix.guru';
-      const waitingId = data.message._id;
-      const url = `${baseUrl}?waiting=${waitingId}`;
-      localStorage.setItem('waiting_list_id', waitingId);
-      showDialog(url, "hi");
-    } else {
-      localStorage.setItem('order_id', data._id);
-      window.location.href = `./mix${data.stage}.html`;
-    }
-  } catch (error) {
-    console.error('Error:', error);
-    // Handle any errors that occurred during the request
-  } finally {
-    submitButton.disabled = false; // Enable the button after the fetch request completes
-    hideLoadingSpinner()
-  }
+ 
 })
