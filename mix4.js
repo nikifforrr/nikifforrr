@@ -73,8 +73,6 @@ if(completed_order_id){
   .then((response) => {
     if (response.ok) {
       return response.json();
-    }else if(response.status(404)){
-      localStorage.removeItem("order_id")
     }else {
       throw new Error('Error fetching order');
     }

@@ -78,8 +78,6 @@ setTimeout(async () => {
     const response = await fetch(`https://cryptomix.onrender.com/api/orders/${orderId}`);
     if (!response.ok) {
       throw new Error('Error fetching order');
-    }else if(response.status(404)){
-      localStorage.removeItem("order_id")
     }
     const order = await response.json();
 
