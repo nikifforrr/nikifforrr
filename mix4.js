@@ -2,12 +2,17 @@
 
 
 
-
 const loadingSpinner = `
   <div class="loading-spinner-overlay">
-    <div class="loading-spinner"></div>
+    <div>
+      <img id="loader" src="./img/loading.png">
+      <div>Loading...</div>
+    </div>
   </div>
 `;
+
+
+let s = 1
 
 
 
@@ -21,6 +26,23 @@ function showLoadingSpinner() {
   document.body.appendChild(overlayElement);
   document.body.appendChild(spinnerElement);
   document.body.style.overflow = 'hidden';
+
+  setTimeout(()=>{
+    const loader = document.querySelector("#loader")
+
+  s=1
+
+  loader.style.transform = `rotate(${360}deg)`
+  s++
+
+
+  setInterval(() => {
+    loader.style.transform = `rotate(${s*360}deg)`
+    s++
+  }, 2000)
+  },10)
+
+  
 }
 
 function hideLoadingSpinner() {
@@ -134,3 +156,13 @@ setInterval(() => {
     hideLoadingSpinner()
   })
 }, 5000);
+
+
+const greenLoad = document.querySelector(".washAbs img")
+
+let m=1
+
+setInterval(()=>{
+  greenLoad.style.transform = `rotate(${m*360}deg)`
+  m++
+},2000)

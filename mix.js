@@ -4,9 +4,15 @@
 
 const loadingSpinner = `
   <div class="loading-spinner-overlay">
-    <div class="loading-spinner"></div>
+    <div>
+      <img id="loader" src="./img/loading.png">
+      <div>Loading...</div>
+    </div>
   </div>
 `;
+
+
+let s = 1
 
 
 
@@ -20,6 +26,23 @@ function showLoadingSpinner() {
   document.body.appendChild(overlayElement);
   document.body.appendChild(spinnerElement);
   document.body.style.overflow = 'hidden';
+
+  setTimeout(()=>{
+    const loader = document.querySelector("#loader")
+
+  s=1
+
+  loader.style.transform = `rotate(${360}deg)`
+  s++
+
+
+  setInterval(() => {
+    loader.style.transform = `rotate(${s*360}deg)`
+    s++
+  }, 2000)
+  },10)
+
+  
 }
 
 function hideLoadingSpinner() {
@@ -49,80 +72,80 @@ const orderId = urlParams.get('order_id');
 
 
 
-if(orderId){
+if (orderId) {
   processOrder(orderId)
-function processOrder(order_id) {
-      const isValidIdFormat = /^[0-9a-fA-F]{24}$/.test(order_id);
+  function processOrder(order_id) {
+    const isValidIdFormat = /^[0-9a-fA-F]{24}$/.test(order_id);
+    if (!isValidIdFormat) {
+      const errorMessage = 'Invalid Order ID format';
+      const errorUrl = `https://mix.guru/error-order.html?error=${encodeURIComponent(errorMessage)}`;
+      window.location.href = errorUrl;
+    } else {
+      showLoadingSpinner()
+      // Send a request to the server to fetch the order based on the ID
+      fetch(`https://cryptomix.onrender.com/api/orders/${order_id}`)
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            response.json().then((message) => {
+              const errorUrl = `https://mix.guru/error-order.html?error=${message.error}`;
+              window.location.href = errorUrl;
+            })
+          }
+        })
+        .then(order => {
+          localStorage.setItem("order_id", order._id)
+          console.log(order)
+          window.location.href = `./mix${order.stage}.html`
+        })
+        .catch(error => {
+          const errorUrl = `https://mix.guru/error-order.html?error=${error}`;
+          window.location.href = errorUrl;
+        }).finally(() => {
+          hideLoadingSpinner()
+        })
+    }
+  }
+} else {
+
+  const waitingListId = urlParams.get('waiting_list_id');
+  if (waitingListId) {
+    processWaitingList(waitingListId);
+
+    function processWaitingList(waiting_list_id) {
+      const isValidIdFormat = /^[0-9a-fA-F]{24}$/.test(waiting_list_id);
       if (!isValidIdFormat) {
-        const errorMessage = 'Invalid Order ID format';
-        const errorUrl = `https://mix.guru/error-order.html?error=${encodeURIComponent(errorMessage)}`;
+        const errorMessage = 'Invalid Waiting List ID format';
+        const errorUrl = `https://mix.guru/error-waiting-list.html?error=${encodeURIComponent(errorMessage)}`;
         window.location.href = errorUrl;
       } else {
+        // Send a request to the server to fetch the waiting list based on the ID
         showLoadingSpinner()
-        // Send a request to the server to fetch the order based on the ID
-        fetch(`https://cryptomix.onrender.com/api/orders/${order_id}`)
+        fetch(`https://cryptomix.onrender.com/api/orders/waiting/${waiting_list_id}`)
           .then(response => {
             if (response.ok) {
               return response.json();
             } else {
-              response.json().then((message)=>{
-                const errorUrl = `https://mix.guru/error-order.html?error=${message.error}`;
+              response.json().then((message) => {
+                const errorUrl = `https://mix.guru/error-waiting-list.html?error=${message.error}`;
                 window.location.href = errorUrl;
               })
             }
           })
-          .then(order => {
-            localStorage.setItem("order_id",order._id) 
-            console.log(order)
-            window.location.href = `./mix${order.stage}.html`
+          .then(waitingList => {
+            localStorage.setItem("order_id", waitingList._id);
+            window.location.href = `./mix${waitingList.stage}.html`
           })
           .catch(error => {
-            const errorUrl = `https://mix.guru/error-order.html?error=${error}`;
+            const errorUrl = `https://mix.guru/error-waiting-list.html?error=${error}`;
             window.location.href = errorUrl;
-          }).finally(()=>{
+          }).finally(() => {
             hideLoadingSpinner()
           })
       }
     }
-}else {
-        
-    const waitingListId = urlParams.get('waiting_list_id');
-    if(waitingListId){
-      processWaitingList(waitingListId);
-    
-      function processWaitingList(waiting_list_id) {
-        const isValidIdFormat = /^[0-9a-fA-F]{24}$/.test(waiting_list_id);
-        if (!isValidIdFormat) {
-          const errorMessage = 'Invalid Waiting List ID format';
-          const errorUrl = `https://mix.guru/error-waiting-list.html?error=${encodeURIComponent(errorMessage)}`;
-          window.location.href = errorUrl;
-        } else {
-          // Send a request to the server to fetch the waiting list based on the ID
-          showLoadingSpinner()
-          fetch(`https://cryptomix.onrender.com/api/orders/waiting/${waiting_list_id}`)
-            .then(response => {
-              if (response.ok) {
-                return response.json();
-              } else {
-                response.json().then((message)=>{
-                  const errorUrl = `https://mix.guru/error-waiting-list.html?error=${message.error}`;
-                  window.location.href = errorUrl;
-                })
-              }
-            })
-            .then(waitingList => {
-              localStorage.setItem("order_id", waitingList._id);
-              window.location.href = `./mix${waitingList.stage}.html`
-            })
-            .catch(error => {
-              const errorUrl = `https://mix.guru/error-waiting-list.html?error=${error}`;
-              window.location.href = errorUrl;
-            }).finally(()=>{
-              hideLoadingSpinner()
-            })
-        }
-      }
-    }
+  }
 }
 
 
@@ -131,90 +154,90 @@ function processOrder(order_id) {
 
 
 const completed_order_id = localStorage.getItem("completed_order_id") || localStorage.getItem("order_id")
-if(completed_order_id){
+if (completed_order_id) {
   showLoadingSpinner();
   fetch(`https://cryptomix.onrender.com/api/completed-order/${completed_order_id}`)
-  .then((response) => {
-    if (response.ok) {
-      return response.json();
-    } else {
-      throw new Error('Error fetching order');
-    }
-  })
-  .then((order) => {
-    const createdAt = new Date(order.createdAt);
-    const currentTime = new Date();
-    const timeDifferenceInHours = Math.abs(currentTime - createdAt) / 36e5;
-    console.log(timeDifferenceInHours)
-    if (timeDifferenceInHours > 7) {
-      localStorage.removeItem("order_id");
-      localStorage.removeItem("completed_order_id");
-      alert("This order has completed");
-      window.location.href = `./mix.html`;
-    } else {
-      if (order.stage === 5) {
-        localStorage.removeItem("order_id");
-        window.location.href = `mix${order.stage}.html`;
-        console.log("Stage is 5, no action needed");
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
       } else {
-        // Redirect to the appropriate page based on the stage
-        window.location.href = `mix${order.stage}.html`;
+        throw new Error('Error fetching order');
       }
-    } 
-  })
-  .catch((error) => {
-    console.error(error);
-    // Handle the error and try an alternative fetch request
+    })
+    .then((order) => {
+      const createdAt = new Date(order.createdAt);
+      const currentTime = new Date();
+      const timeDifferenceInHours = Math.abs(currentTime - createdAt) / 36e5;
+      console.log(timeDifferenceInHours)
+      if (timeDifferenceInHours > 7) {
+        localStorage.removeItem("order_id");
+        localStorage.removeItem("completed_order_id");
+        alert("This order has completed");
+        window.location.href = `./mix.html`;
+      } else {
+        if (order.stage === 5) {
+          localStorage.removeItem("order_id");
+          window.location.href = `mix${order.stage}.html`;
+          console.log("Stage is 5, no action needed");
+        } else {
+          // Redirect to the appropriate page based on the stage
+          window.location.href = `mix${order.stage}.html`;
+        }
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+      // Handle the error and try an alternative fetch request
       showLoadingSpinner()
       fetch(`https://cryptomix.onrender.com/api/orders/${completed_order_id}`)
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error('Error fetching order');
-        }
-      })
-      .then((order) => {
-        // Redirect to the appropriate page based on the stage
-        localStorage.removeItem("waiting_list_id");
-        localStorage.setItem("completed_order_id",completed_order_id);
-        window.location.href = `./mix${order.stage}.html`;
-      })
-      .catch((error) => {
-        console.error(error);
-      }).finally(()=>{
-        hideLoadingSpinner();
-      })
-  })
-  .finally(() => {
-    hideLoadingSpinner();
-  });
-
-} else{
-    const waiting_list_id = localStorage.getItem("waiting_list_id")
-    if(waiting_list_id){
-        showLoadingSpinner()
-        fetch(`https://cryptomix.onrender.com/api/orders/${waiting_list_id}`)
-        .then(response => {
+        .then((response) => {
           if (response.ok) {
             return response.json();
           } else {
             throw new Error('Error fetching order');
           }
         })
-        .then(order => {
-            // Redirect to the appropriate page based on the stage
-            localStorage.removeItem("waiting_list_id");
-            localStorage.setItem("order_id",order._id)
-            window.location.href = `./mix${order.stage}.html`;
+        .then((order) => {
+          // Redirect to the appropriate page based on the stage
+          localStorage.removeItem("waiting_list_id");
+          localStorage.setItem("completed_order_id", completed_order_id);
+          window.location.href = `./mix${order.stage}.html`;
         })
-        .catch(error => {
+        .catch((error) => {
           console.error(error);
-        }).finally(()=>{
-          hideLoadingSpinner()
+        }).finally(() => {
+          hideLoadingSpinner();
         })
-    }
-    
+    })
+    .finally(() => {
+      hideLoadingSpinner();
+    });
+
+} else {
+  const waiting_list_id = localStorage.getItem("waiting_list_id")
+  if (waiting_list_id) {
+    showLoadingSpinner()
+    fetch(`https://cryptomix.onrender.com/api/orders/${waiting_list_id}`)
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error('Error fetching order');
+        }
+      })
+      .then(order => {
+        // Redirect to the appropriate page based on the stage
+        localStorage.removeItem("waiting_list_id");
+        localStorage.setItem("order_id", order._id)
+        window.location.href = `./mix${order.stage}.html`;
+      })
+      .catch(error => {
+        console.error(error);
+      }).finally(() => {
+        hideLoadingSpinner()
+      })
+  }
+
 }
 
 
@@ -254,46 +277,73 @@ let opened = false
 let isOrderCreated = false
 
 selector.addEventListener("click", () => {
-    if (opened) {
-        opened = false
-        dropdown.style.display = "none"
-        return
-    }
-    dropdown.style.display = "flex"
-    opened = true
+  if (opened) {
+    opened = false
+    dropdown.style.display = "none"
+    return
+  }
+  dropdown.style.display = "flex"
+  opened = true
 })
 
 x.addEventListener("click", () => {
-    dropdown.style.display = "none"
+  dropdown.style.display = "none"
 })
 
+
+
 options[0].addEventListener("click", () => {
-    selectedImg.src = "img/btc.svg"
-    selectedName.innerText = "BTC"
-    setSelectedCurrency("Bitcoin");
-    bounds.innerText = "You can mix between 0.00076 and 35 BTC"
+  selectedImg.src = "img/btc.svg"
+  selectedName.innerText = "BTC"
+  setSelectedCurrency("Bitcoin");
+  bounds.innerText = "You can mix between 0.00076 and 35 BTC"
 })
 
 options[1].addEventListener("click", () => {
+  selectedImg.src = "img/ether.svg"
+  selectedName.innerText = "ETH"
+  setSelectedCurrency("Ethereum");
+  bounds.innerText = "You can mix between 0.015 and 500 ETH"
+})
+
+options[2].addEventListener("click", () => {
+  selectedImg.src = "img/tether.svg"
+  selectedName.innerText = "TETHER"
+  setSelectedCurrency("Tether");
+  bounds.innerText = "You can mix between 20 and 1000000 TETHER"
+})
+
+options[3].addEventListener("click", () => {
+  selectedImg.src = "img/usdc.svg"
+  selectedName.innerText = "USDC"
+  setSelectedCurrency("USD Coin (Ethereum)");
+  bounds.innerText = "You can mix between 20 and 1000000 USD Coin"
+})
+
+if (!(localStorage.getItem("mix") == null)) {
+  let num = localStorage.getItem("mix")
+
+  if (num == 0) {
     selectedImg.src = "img/ether.svg"
     selectedName.innerText = "ETH"
     setSelectedCurrency("Ethereum");
     bounds.innerText = "You can mix between 0.015 and 500 ETH"
-})
+  }
 
-options[2].addEventListener("click", () => {
+  else if (num == 1) {
+    selectedImg.src = "img/btc.svg"
+    selectedName.innerText = "BTC"
+    setSelectedCurrency("Bitcoin");
+    bounds.innerText = "You can mix between 0.00076 and 35 BTC"
+  }
+
+  else if (num == 2) {
     selectedImg.src = "img/tether.svg"
     selectedName.innerText = "TETHER"
     setSelectedCurrency("Tether");
     bounds.innerText = "You can mix between 20 and 1000000 TETHER"
-})
-
-options[3].addEventListener("click", () => {
-    selectedImg.src = "img/usdc.svg"
-    selectedName.innerText = "USDC"
-    setSelectedCurrency("USD Coin (Ethereum)");
-    bounds.innerText = "You can mix between 20 and 1000000 USD Coin"
-})
+  }
+}
 
 
 
@@ -329,59 +379,59 @@ const sliderDots2 = document.querySelectorAll(".sliderdot2")
 let bins
 
 function percentages() {
-    const percentages = document.querySelectorAll(".amount-distribution")
-    for (let i = 0; i < percentages.length; i++) {
-        percentages[i].innerText = `${Math.floor(100 / addressesNumber)}%`
-    }
+  const percentages = document.querySelectorAll(".amount-distribution")
+  for (let i = 0; i < percentages.length; i++) {
+    percentages[i].innerText = `${Math.floor(100 / addressesNumber)}%`
+  }
 }
 
 function disperseDots() {
-    if (addressesNumber == 2) {
-        for (let i = 0; i < sliderDots.length; i++) {
-            sliderDots[i].style.display = "none"
-        }
-        for (let i = 0; i < 2 - 1; i++) {
-            sliderDots[i].style.display = "block"
-        }
-        sliderDots[0].style.left = `${0.5 * slider2Width}px`
+  if (addressesNumber == 2) {
+    for (let i = 0; i < sliderDots.length; i++) {
+      sliderDots[i].style.display = "none"
     }
-
-    if (addressesNumber == 3) {
-        for (let i = 0; i < sliderDots.length; i++) {
-            sliderDots[i].style.display = "none"
-        }
-        for (let i = 0; i < 3 - 1; i++) {
-            sliderDots[i].style.display = "block"
-        }
-        sliderDots[0].style.left = `${0.33 * slider2Width}px`
-        sliderDots[1].style.left = `${0.77 * slider2Width}px`
-
+    for (let i = 0; i < 2 - 1; i++) {
+      sliderDots[i].style.display = "block"
     }
+    sliderDots[0].style.left = `${0.5 * slider2Width}px`
+  }
 
-    if (addressesNumber == 4) {
-        for (let i = 0; i < sliderDots.length; i++) {
-            sliderDots[i].style.display = "none"
-        }
-        for (let i = 0; i < 4 - 1; i++) {
-            sliderDots[i].style.display = "block"
-        }
-        sliderDots[0].style.left = `${0.25 * slider2Width}px`
-        sliderDots[1].style.left = `${0.5 * slider2Width}px`
-        sliderDots[2].style.left = `${0.75 * slider2Width}px`
+  if (addressesNumber == 3) {
+    for (let i = 0; i < sliderDots.length; i++) {
+      sliderDots[i].style.display = "none"
     }
+    for (let i = 0; i < 3 - 1; i++) {
+      sliderDots[i].style.display = "block"
+    }
+    sliderDots[0].style.left = `${0.33 * slider2Width}px`
+    sliderDots[1].style.left = `${0.77 * slider2Width}px`
 
-    if (addressesNumber == 5) {
-        for (let i = 0; i < sliderDots.length; i++) {
-            sliderDots[i].style.display = "none"
-        }
-        for (let i = 0; i < 5 - 1; i++) {
-            sliderDots[i].style.display = "block"
-        }
-        sliderDots[0].style.left = `${0.2 * slider2Width}px`
-        sliderDots[1].style.left = `${0.4 * slider2Width}px`
-        sliderDots[2].style.left = `${0.6 * slider2Width}px`
-        sliderDots[3].style.left = `${0.8 * slider2Width}px`
+  }
+
+  if (addressesNumber == 4) {
+    for (let i = 0; i < sliderDots.length; i++) {
+      sliderDots[i].style.display = "none"
     }
+    for (let i = 0; i < 4 - 1; i++) {
+      sliderDots[i].style.display = "block"
+    }
+    sliderDots[0].style.left = `${0.25 * slider2Width}px`
+    sliderDots[1].style.left = `${0.5 * slider2Width}px`
+    sliderDots[2].style.left = `${0.75 * slider2Width}px`
+  }
+
+  if (addressesNumber == 5) {
+    for (let i = 0; i < sliderDots.length; i++) {
+      sliderDots[i].style.display = "none"
+    }
+    for (let i = 0; i < 5 - 1; i++) {
+      sliderDots[i].style.display = "block"
+    }
+    sliderDots[0].style.left = `${0.2 * slider2Width}px`
+    sliderDots[1].style.left = `${0.4 * slider2Width}px`
+    sliderDots[2].style.left = `${0.6 * slider2Width}px`
+    sliderDots[3].style.left = `${0.8 * slider2Width}px`
+  }
 }
 
 
@@ -390,89 +440,89 @@ function disperseDots() {
 
 
 function secondDots() {
-    if (addressesNumber == 1) {
-        sliderDots2[0].style.display = "block"
+  if (addressesNumber == 1) {
+    sliderDots2[0].style.display = "block"
+  }
+  if (addressesNumber == 2) {
+    for (let i = 0; i < sliderDots.length; i++) {
+      sliderDots2[i].style.display = "none"
     }
-    if (addressesNumber == 2) {
-        for (let i = 0; i < sliderDots.length; i++) {
-            sliderDots2[i].style.display = "none"
-        }
-        for (let i = 0; i < 2; i++) {
-            sliderDots2[i].style.display = "block"
-        }
+    for (let i = 0; i < 2; i++) {
+      sliderDots2[i].style.display = "block"
     }
+  }
 
-    if (addressesNumber == 3) {
-        for (let i = 0; i < sliderDots.length; i++) {
-            sliderDots2[i].style.display = "none"
-        }
-        for (let i = 0; i < 3; i++) {
-            sliderDots2[i].style.display = "block"
-        }
+  if (addressesNumber == 3) {
+    for (let i = 0; i < sliderDots.length; i++) {
+      sliderDots2[i].style.display = "none"
     }
+    for (let i = 0; i < 3; i++) {
+      sliderDots2[i].style.display = "block"
+    }
+  }
 
-    if (addressesNumber == 4) {
-        for (let i = 0; i < sliderDots.length; i++) {
-            sliderDots2[i].style.display = "none"
-        }
-        for (let i = 0; i < 4; i++) {
-            sliderDots2[i].style.display = "block"
-        }
+  if (addressesNumber == 4) {
+    for (let i = 0; i < sliderDots.length; i++) {
+      sliderDots2[i].style.display = "none"
     }
+    for (let i = 0; i < 4; i++) {
+      sliderDots2[i].style.display = "block"
+    }
+  }
 
-    if (addressesNumber == 5) {
-        for (let i = 0; i < sliderDots.length; i++) {
-            sliderDots2[i].style.display = "none"
-        }
-        for (let i = 0; i < 5; i++) {
-            sliderDots2[i].style.display = "block"
-        }
+  if (addressesNumber == 5) {
+    for (let i = 0; i < sliderDots.length; i++) {
+      sliderDots2[i].style.display = "none"
     }
+    for (let i = 0; i < 5; i++) {
+      sliderDots2[i].style.display = "block"
+    }
+  }
 }
 
 function addAddress() {
 
-    addressesNumber += 1
-    if (addressesNumber > 1) {
-        firstSlider.style.display = "flex"
-    }
+  addressesNumber += 1
+  if (addressesNumber > 1) {
+    firstSlider.style.display = "flex"
+  }
 
-    disperseDots()
+  disperseDots()
 
-    secondDots()
+  secondDots()
 
-    let newAddress = document.createElement("div")
-    newAddress.classList.add("address")
-    newAddress.innerHTML = addressInner
-    addressesDiv.appendChild(newAddress)
+  let newAddress = document.createElement("div")
+  newAddress.classList.add("address")
+  newAddress.innerHTML = addressInner
+  addressesDiv.appendChild(newAddress)
 
-    percentages()
+  percentages()
 
-    if (addressesNumber == 5) {
-        addAddressBtn.style.display = "none"
-    }
+  if (addressesNumber == 5) {
+    addAddressBtn.style.display = "none"
+  }
 
-    const addresses = document.querySelectorAll(".address")
-    delays = document.querySelectorAll(".transfer-delay")
-    distributions = document.querySelectorAll(".amount-distribution")
+  const addresses = document.querySelectorAll(".address")
+  delays = document.querySelectorAll(".transfer-delay")
+  distributions = document.querySelectorAll(".amount-distribution")
 
-    bins = document.querySelectorAll(".bin")
+  bins = document.querySelectorAll(".bin")
 
-    for (let i = 0; i < bins.length; i++) {
-        bins[i].addEventListener("click", () => {
-            addressesDiv.removeChild(addresses[i + 1])
-            addressesNumber -= 1
-            disperseDots()
-            secondDots()
-            if (addressesNumber < 2) {
-                firstSlider.style.display = "none"
-            }
-            if (addressesNumber < 5) {
-                addAddressBtn.style.display = "flex"
-            }
-            percentages()
-        })
-    }
+  for (let i = 0; i < bins.length; i++) {
+    bins[i].addEventListener("click", () => {
+      addressesDiv.removeChild(addresses[i + 1])
+      addressesNumber -= 1
+      disperseDots()
+      secondDots()
+      if (addressesNumber < 2) {
+        firstSlider.style.display = "none"
+      }
+      if (addressesNumber < 5) {
+        addAddressBtn.style.display = "flex"
+      }
+      percentages()
+    })
+  }
 }
 
 secondDots()
@@ -481,7 +531,7 @@ addAddressBtn.addEventListener("click", addAddress)
 
 
 let clientX = 0
-let touch=0
+let touch = 0
 let isClicked = [false, false, false, false, false]
 
 let bitenI = 0
@@ -491,9 +541,9 @@ const sliderLine = document.querySelectorAll(".slider")
 
 let slider2Width = parseInt(sliderLine[1].offsetWidth)
 
-window.addEventListener("resize", ()=>{
-    let slider2Width = parseInt(sliderLine[1].offsetWidth)
-    console.log(slider2Width)
+window.addEventListener("resize", () => {
+  let slider2Width = parseInt(sliderLine[1].offsetWidth)
+  console.log(slider2Width)
 })
 
 let maxMinutes = 4320
@@ -503,71 +553,71 @@ let distributions = document.querySelectorAll(".amount-distribution")
 
 
 function getMouseLoc(event) {
-    clientX = event.clientX
-    isClicked = true
+  clientX = event.clientX
+  isClicked = true
 }
 function getMouseLocTouch(event) {
+  touch = event.touches[0].clientX
+  isClicked = true
+}
+
+for (let i = 0; i < sliderDots2.length; i++) {
+  sliderDots2[i].style.left = "1px"
+}
+
+
+
+
+for (let i = 0; i < sliderDots2.length; i++) {
+  sliderDots2[i].addEventListener("touchstart", (event) => {
     touch = event.touches[0].clientX
-    isClicked = true
-}
+    isClicked[i] = true
+    let currLeft = parseInt(sliderDots2[i].style.left)
 
-for (let i = 0; i < sliderDots2.length; i++) {
-    sliderDots2[i].style.left = "1px"
-}
+    window.addEventListener("touchmove", (event) => {
+      if (isClicked[i]) {
+        let newtouch = event.touches[0].clientX
+        if ((newtouch - touch + currLeft) > 0 && (newtouch - touch + currLeft) < slider2Width) {
+          sliderDots2[i].style.left = `${newtouch - touch + currLeft}px`
+          let percent = (newtouch - touch + currLeft) / slider2Width
+          let minutes = 4200
 
+          delays[i].innerText = `${2 + parseInt((minutes * percent) / 60)}h ${parseInt(minutes * percent) % 60}min`
+        }
 
+      }
 
-
-for (let i = 0; i < sliderDots2.length; i++) {
-    sliderDots2[i].addEventListener("touchstart", (event) => {
-        touch = event.touches[0].clientX
-        isClicked[i] = true
-        let currLeft = parseInt(sliderDots2[i].style.left)
-
-        window.addEventListener("touchmove", (event) => {
-            if (isClicked[i]) {
-                let newtouch = event.touches[0].clientX
-                if ((newtouch - touch + currLeft) > 0 && (newtouch - touch + currLeft) < slider2Width) {
-                    sliderDots2[i].style.left = `${newtouch - touch + currLeft}px`
-                    let percent = (newtouch - touch + currLeft) / slider2Width
-                    let minutes = 4200
-
-                    delays[i].innerText = `${2 + parseInt((minutes * percent) / 60)}h ${parseInt(minutes * percent) % 60}min`
-                }
-
-            }
-
-            window.addEventListener("touchend", () => {
-                isClicked[i] = false
-            })
-        })
+      window.addEventListener("touchend", () => {
+        isClicked[i] = false
+      })
     })
+  })
 }
 
 for (let i = 0; i < sliderDots2.length; i++) {
-    sliderDots2[i].addEventListener("mousedown", (event) => {
-        clientX = event.clientX
-        isClicked[i] = true
-        let currLeft = parseInt(sliderDots2[i].style.left)
+  sliderDots2[i].addEventListener("mousedown", (event) => {
+    clientX = event.clientX
+    isClicked[i] = true
+    let currLeft = parseInt(sliderDots2[i].style.left)
 
-        window.addEventListener("mousemove", (event) => {
-            if (isClicked[i]) {
-                let newClientX = event.clientX
-                if ((newClientX - clientX + currLeft) > 0 && (newClientX - clientX + currLeft) < slider2Width) {
-                    sliderDots2[i].style.left = `${newClientX - clientX + currLeft}px`
-                    let percent = (newClientX - clientX + currLeft) / slider2Width
-                    let minutes = 4200
+    window.addEventListener("mousemove", (event) => {
+      if (isClicked[i]) {
+        let newClientX = event.clientX
+        if ((newClientX - clientX + currLeft) > 0 && (newClientX - clientX + currLeft) < slider2Width) {
+          sliderDots2[i].style.left = `${newClientX - clientX + currLeft}px`
+          let percent = (newClientX - clientX + currLeft) / slider2Width
+          let minutes = 4200
 
-                    delays[i].innerText = `${2 + parseInt((minutes * percent) / 60)}h ${parseInt(minutes * percent) % 60}min`
-                }
+          delays[i].innerText = `${2 + parseInt((minutes * percent) / 60)}h ${parseInt(minutes * percent) % 60}min`
+        }
 
-            }
+      }
 
-            window.addEventListener("mouseup", () => {
-                isClicked[i] = false
-            })
-        })
+      window.addEventListener("mouseup", () => {
+        isClicked[i] = false
+      })
     })
+  })
 }
 
 
@@ -598,280 +648,280 @@ let isClicked2 = [false, false, false, false]
 
 
 for (let i = 0; i < sliderDots.length; i++) {
-    sliderDots[i].addEventListener("touchstart", (event) => {
-        touch = event.touches[0].clientX
-        isClicked2[i] = true
-        let currLeft = parseInt(sliderDots[i].style.left)
+  sliderDots[i].addEventListener("touchstart", (event) => {
+    touch = event.touches[0].clientX
+    isClicked2[i] = true
+    let currLeft = parseInt(sliderDots[i].style.left)
 
-        window.addEventListener("touchmove", (event) => {
-            if (isClicked2[i]) {
-                let newtouch = event.touches[0].clientX
-                if (addressesNumber == 2) {
-                    if ((newtouch - touch + currLeft) > 0 && (newtouch - touch + currLeft) < slider2Width) {
-                        sliderDots[i].style.left = `${newtouch - touch + currLeft}px`
-                        let percent = (newtouch - touch + currLeft) / slider2Width * 100
+    window.addEventListener("touchmove", (event) => {
+      if (isClicked2[i]) {
+        let newtouch = event.touches[0].clientX
+        if (addressesNumber == 2) {
+          if ((newtouch - touch + currLeft) > 0 && (newtouch - touch + currLeft) < slider2Width) {
+            sliderDots[i].style.left = `${newtouch - touch + currLeft}px`
+            let percent = (newtouch - touch + currLeft) / slider2Width * 100
 
-                        distributions[0].innerText = `${Math.round(100 - (100 - percent))}%`
-                        distributions[1].innerText = `${Math.round(100 - percent)}%`
-                    }
-                }
-
-
-
-
-                if (addressesNumber == 3) {
-                    if (i == 0) {
-                        if ((newtouch - touch + currLeft) > 0 && (newtouch - touch + currLeft) < slider2Width && (newtouch - touch + currLeft) < parseInt(sliderDots[1].style.left)) {
-                            sliderDots[i].style.left = `${newtouch - touch + currLeft}px`
-                            let percent = (newtouch - touch + currLeft) / slider2Width * 100
-
-                            distributions[0].innerText = `${Math.round(percent)}%`
-                            distributions[1].innerText = `${Math.round((parseInt(sliderDots[1].style.left) / slider2Width * 100) - percent)}%`
-                        }
-                    }
-
-                    if (i == 1) {
-                        if ((newtouch - touch + currLeft) > 0 && (newtouch - touch + currLeft) < slider2Width && (newtouch - touch + currLeft) > parseInt(sliderDots[0].style.left)) {
-                            sliderDots[i].style.left = `${newtouch - touch + currLeft}px`
-                            let percent = (newtouch - touch + currLeft) / slider2Width * 100
-
-                            distributions[1].innerText = `${Math.round(percent - (parseInt(sliderDots[0].style.left) / slider2Width * 100))}%`
-                            distributions[2].innerText = `${Math.round(100 - percent)}%`
-                        }
-                    }
-                }
-
-
-                if (addressesNumber == 4) {
-                    if (i == 0) {
-                        if ((newtouch - touch + currLeft) > 0 && (newtouch - touch + currLeft) < slider2Width && (newtouch - touch + currLeft) < parseInt(sliderDots[1].style.left)) {
-                            sliderDots[i].style.left = `${newtouch - touch + currLeft}px`
-                            let percent = (newtouch - touch + currLeft) / slider2Width * 100
-
-                            distributions[0].innerText = `${Math.round(percent)}%`
-                            distributions[1].innerText = `${Math.round((parseInt(sliderDots[1].style.left) / slider2Width * 100) - percent)}%`
-                        }
-                    }
-
-                    if (i == 1) {
-                        if ((newtouch - touch + currLeft) > 0 && (newnewtouchlientX - touch + currLeft) < slider2Width && (newtouch - touch + currLeft) > parseInt(sliderDots[0].style.left) && (newClientX - clientX + currLeft) < parseInt(sliderDots[2].style.left)) {
-                            sliderDots[i].style.left = `${newtouch - touch + currLeft}px`
-                            let percent = (newtouch - touch + currLeft) / slider2Width * 100
-
-                            distributions[1].innerText = `${Math.round(percent - (parseInt(sliderDots[0].style.left) / slider2Width * 100))}%`
-                            distributions[2].innerText = `${Math.round((parseInt(sliderDots[2].style.left) / slider2Width * 100) - percent)}%`
-                        }
-                    }
-
-                    if (i == 2) {
-                        if ((newtouch - touch + currLeft) > 0 && (newtouch - touch + currLeft) < slider2Width && (newtouch - touch + currLeft) > parseInt(sliderDots[1].style.left)) {
-                            sliderDots[i].style.left = `${newtouch - touch + currLeft}px`
-                            let percent = (newtouch - touch + currLeft) / slider2Width * 100
-
-                            distributions[2].innerText = `${Math.round(percent - (parseInt(sliderDots[1].style.left) / slider2Width * 100))}%`
-                            distributions[3].innerText = `${Math.round(100 - percent)}%`
-                        }
-                    }
-                }
+            distributions[0].innerText = `${Math.round(100 - (100 - percent))}%`
+            distributions[1].innerText = `${Math.round(100 - percent)}%`
+          }
+        }
 
 
 
 
+        if (addressesNumber == 3) {
+          if (i == 0) {
+            if ((newtouch - touch + currLeft) > 0 && (newtouch - touch + currLeft) < slider2Width && (newtouch - touch + currLeft) < parseInt(sliderDots[1].style.left)) {
+              sliderDots[i].style.left = `${newtouch - touch + currLeft}px`
+              let percent = (newtouch - touch + currLeft) / slider2Width * 100
 
-
-
-                if (addressesNumber == 5) {
-                    if (i == 0) {
-                        if ((newtouch - touch + currLeft) > 0 && (newtouch - touch + currLeft) < slider2Width && (newtouch - touch + currLeft) < parseInt(sliderDots[1].style.left)) {
-                            sliderDots[i].style.left = `${newtouch - touch + currLeft}px`
-                            let percent = (newtouch - touch + currLeft) / slider2Width * 100
-
-                            distributions[0].innerText = `${Math.round(percent)}%`
-                            distributions[1].innerText = `${Math.round((parseInt(sliderDots[1].style.left) / slider2Width * 100) - percent)}%`
-                        }
-                    }
-
-                    if (i == 1) {
-                        if ((newtouch - touch + currLeft) > 0 && (newtouch - touch + currLeft) < slider2Width && (newtouch - touch + currLeft) > parseInt(sliderDots[0].style.left) && (newClientX - clientX + currLeft) < parseInt(sliderDots[2].style.left)) {
-                            sliderDots[i].style.left = `${newtouch - touch + currLeft}px`
-                            let percent = (newtouch - touch + currLeft) / slider2Width * 100
-
-                            distributions[1].innerText = `${Math.round(percent - (parseInt(sliderDots[0].style.left) / slider2Width * 100))}%`
-                            distributions[2].innerText = `${Math.round((parseInt(sliderDots[2].style.left) / slider2Width * 100) - percent)}%`
-                        }
-                    }
-
-                    if (i == 2) {
-                        if ((newtouch - touch + currLeft) > 0 && (newtouch - touch + currLeft) < slider2Width && (newtouch - touch + currLeft) > parseInt(sliderDots[1].style.left) && (newClientX - clientX + currLeft) < parseInt(sliderDots[3].style.left)) {
-                            sliderDots[i].style.left = `${newtouch - touch + currLeft}px`
-                            let percent = (newtouch - touch + currLeft) / slider2Width * 100
-
-                            distributions[2].innerText = `${Math.round(percent - (parseInt(sliderDots[1].style.left) / slider2Width * 100))}%`
-                            distributions[3].innerText = `${Math.round((parseInt(sliderDots[3].style.left) / slider2Width * 100) - percent)}%`
-                        }
-                    }
-
-
-                    if (i == 3) {
-                        if ((newtouch - touch + currLeft) > 0 && (newtouch - touch + currLeft) < slider2Width && (newtouch - touch + currLeft) > parseInt(sliderDots[2].style.left)) {
-                            sliderDots[i].style.left = `${newtouch - touch + currLeft}px`
-                            let percent = (newtouch - touch + currLeft) / slider2Width * 100
-
-                            distributions[3].innerText = `${Math.round(percent - (parseInt(sliderDots[2].style.left) / slider2Width * 100))}%`
-                            distributions[4].innerText = `${Math.round(100 - percent)}%`
-                        }
-                    }
-                }
-
-
+              distributions[0].innerText = `${Math.round(percent)}%`
+              distributions[1].innerText = `${Math.round((parseInt(sliderDots[1].style.left) / slider2Width * 100) - percent)}%`
             }
+          }
+
+          if (i == 1) {
+            if ((newtouch - touch + currLeft) > 0 && (newtouch - touch + currLeft) < slider2Width && (newtouch - touch + currLeft) > parseInt(sliderDots[0].style.left)) {
+              sliderDots[i].style.left = `${newtouch - touch + currLeft}px`
+              let percent = (newtouch - touch + currLeft) / slider2Width * 100
+
+              distributions[1].innerText = `${Math.round(percent - (parseInt(sliderDots[0].style.left) / slider2Width * 100))}%`
+              distributions[2].innerText = `${Math.round(100 - percent)}%`
+            }
+          }
+        }
 
 
-            window.addEventListener("touchend", () => {
-                isClicked2[i] = false
-            })
-        })
+        if (addressesNumber == 4) {
+          if (i == 0) {
+            if ((newtouch - touch + currLeft) > 0 && (newtouch - touch + currLeft) < slider2Width && (newtouch - touch + currLeft) < parseInt(sliderDots[1].style.left)) {
+              sliderDots[i].style.left = `${newtouch - touch + currLeft}px`
+              let percent = (newtouch - touch + currLeft) / slider2Width * 100
+
+              distributions[0].innerText = `${Math.round(percent)}%`
+              distributions[1].innerText = `${Math.round((parseInt(sliderDots[1].style.left) / slider2Width * 100) - percent)}%`
+            }
+          }
+
+          if (i == 1) {
+            if ((newtouch - touch + currLeft) > 0 && (newnewtouchlientX - touch + currLeft) < slider2Width && (newtouch - touch + currLeft) > parseInt(sliderDots[0].style.left) && (newClientX - clientX + currLeft) < parseInt(sliderDots[2].style.left)) {
+              sliderDots[i].style.left = `${newtouch - touch + currLeft}px`
+              let percent = (newtouch - touch + currLeft) / slider2Width * 100
+
+              distributions[1].innerText = `${Math.round(percent - (parseInt(sliderDots[0].style.left) / slider2Width * 100))}%`
+              distributions[2].innerText = `${Math.round((parseInt(sliderDots[2].style.left) / slider2Width * 100) - percent)}%`
+            }
+          }
+
+          if (i == 2) {
+            if ((newtouch - touch + currLeft) > 0 && (newtouch - touch + currLeft) < slider2Width && (newtouch - touch + currLeft) > parseInt(sliderDots[1].style.left)) {
+              sliderDots[i].style.left = `${newtouch - touch + currLeft}px`
+              let percent = (newtouch - touch + currLeft) / slider2Width * 100
+
+              distributions[2].innerText = `${Math.round(percent - (parseInt(sliderDots[1].style.left) / slider2Width * 100))}%`
+              distributions[3].innerText = `${Math.round(100 - percent)}%`
+            }
+          }
+        }
+
+
+
+
+
+
+
+        if (addressesNumber == 5) {
+          if (i == 0) {
+            if ((newtouch - touch + currLeft) > 0 && (newtouch - touch + currLeft) < slider2Width && (newtouch - touch + currLeft) < parseInt(sliderDots[1].style.left)) {
+              sliderDots[i].style.left = `${newtouch - touch + currLeft}px`
+              let percent = (newtouch - touch + currLeft) / slider2Width * 100
+
+              distributions[0].innerText = `${Math.round(percent)}%`
+              distributions[1].innerText = `${Math.round((parseInt(sliderDots[1].style.left) / slider2Width * 100) - percent)}%`
+            }
+          }
+
+          if (i == 1) {
+            if ((newtouch - touch + currLeft) > 0 && (newtouch - touch + currLeft) < slider2Width && (newtouch - touch + currLeft) > parseInt(sliderDots[0].style.left) && (newClientX - clientX + currLeft) < parseInt(sliderDots[2].style.left)) {
+              sliderDots[i].style.left = `${newtouch - touch + currLeft}px`
+              let percent = (newtouch - touch + currLeft) / slider2Width * 100
+
+              distributions[1].innerText = `${Math.round(percent - (parseInt(sliderDots[0].style.left) / slider2Width * 100))}%`
+              distributions[2].innerText = `${Math.round((parseInt(sliderDots[2].style.left) / slider2Width * 100) - percent)}%`
+            }
+          }
+
+          if (i == 2) {
+            if ((newtouch - touch + currLeft) > 0 && (newtouch - touch + currLeft) < slider2Width && (newtouch - touch + currLeft) > parseInt(sliderDots[1].style.left) && (newClientX - clientX + currLeft) < parseInt(sliderDots[3].style.left)) {
+              sliderDots[i].style.left = `${newtouch - touch + currLeft}px`
+              let percent = (newtouch - touch + currLeft) / slider2Width * 100
+
+              distributions[2].innerText = `${Math.round(percent - (parseInt(sliderDots[1].style.left) / slider2Width * 100))}%`
+              distributions[3].innerText = `${Math.round((parseInt(sliderDots[3].style.left) / slider2Width * 100) - percent)}%`
+            }
+          }
+
+
+          if (i == 3) {
+            if ((newtouch - touch + currLeft) > 0 && (newtouch - touch + currLeft) < slider2Width && (newtouch - touch + currLeft) > parseInt(sliderDots[2].style.left)) {
+              sliderDots[i].style.left = `${newtouch - touch + currLeft}px`
+              let percent = (newtouch - touch + currLeft) / slider2Width * 100
+
+              distributions[3].innerText = `${Math.round(percent - (parseInt(sliderDots[2].style.left) / slider2Width * 100))}%`
+              distributions[4].innerText = `${Math.round(100 - percent)}%`
+            }
+          }
+        }
+
+
+      }
+
+
+      window.addEventListener("touchend", () => {
+        isClicked2[i] = false
+      })
     })
+  })
 }
 
 
 
 
 for (let i = 0; i < sliderDots.length; i++) {
-    sliderDots[i].addEventListener("mousedown", (event) => {
-        clientX = event.clientX
-        isClicked2[i] = true
-        let currLeft = parseInt(sliderDots[i].style.left)
+  sliderDots[i].addEventListener("mousedown", (event) => {
+    clientX = event.clientX
+    isClicked2[i] = true
+    let currLeft = parseInt(sliderDots[i].style.left)
 
-        window.addEventListener("mousemove", (event) => {
-            if (isClicked2[i]) {
-                let newClientX = event.clientX
-                if (addressesNumber == 2) {
-                    if ((newClientX - clientX + currLeft) > 0 && (newClientX - clientX + currLeft) < slider2Width) {
-                        sliderDots[i].style.left = `${newClientX - clientX + currLeft}px`
-                        let percent = (newClientX - clientX + currLeft) / slider2Width * 100
+    window.addEventListener("mousemove", (event) => {
+      if (isClicked2[i]) {
+        let newClientX = event.clientX
+        if (addressesNumber == 2) {
+          if ((newClientX - clientX + currLeft) > 0 && (newClientX - clientX + currLeft) < slider2Width) {
+            sliderDots[i].style.left = `${newClientX - clientX + currLeft}px`
+            let percent = (newClientX - clientX + currLeft) / slider2Width * 100
 
-                        distributions[0].innerText = `${Math.round(100 - (100 - percent))}%`
-                        distributions[1].innerText = `${Math.round(100 - percent)}%`
-                    }
-                }
-
-
-
-
-                if (addressesNumber == 3) {
-                    if (i == 0) {
-                        if ((newClientX - clientX + currLeft) > 0 && (newClientX - clientX + currLeft) < slider2Width && (newClientX - clientX + currLeft) < parseInt(sliderDots[1].style.left)) {
-                            sliderDots[i].style.left = `${newClientX - clientX + currLeft}px`
-                            let percent = (newClientX - clientX + currLeft) / slider2Width * 100
-
-                            distributions[0].innerText = `${Math.round(percent)}%`
-                            distributions[1].innerText = `${Math.round((parseInt(sliderDots[1].style.left) / slider2Width * 100) - percent)}%`
-                        }
-                    }
-
-                    if (i == 1) {
-                        if ((newClientX - clientX + currLeft) > 0 && (newClientX - clientX + currLeft) < slider2Width && (newClientX - clientX + currLeft) > parseInt(sliderDots[0].style.left)) {
-                            sliderDots[i].style.left = `${newClientX - clientX + currLeft}px`
-                            let percent = (newClientX - clientX + currLeft) / slider2Width * 100
-
-                            distributions[1].innerText = `${Math.round(percent - (parseInt(sliderDots[0].style.left) / slider2Width * 100))}%`
-                            distributions[2].innerText = `${Math.round(100 - percent)}%`
-                        }
-                    }
-                }
-
-
-                if (addressesNumber == 4) {
-                    if (i == 0) {
-                        if ((newClientX - clientX + currLeft) > 0 && (newClientX - clientX + currLeft) < slider2Width && (newClientX - clientX + currLeft) < parseInt(sliderDots[1].style.left)) {
-                            sliderDots[i].style.left = `${newClientX - clientX + currLeft}px`
-                            let percent = (newClientX - clientX + currLeft) / slider2Width * 100
-
-                            distributions[0].innerText = `${Math.round(percent)}%`
-                            distributions[1].innerText = `${Math.round((parseInt(sliderDots[1].style.left) / slider2Width * 100) - percent)}%`
-                        }
-                    }
-
-                    if (i == 1) {
-                        if ((newClientX - clientX + currLeft) > 0 && (newClientX - clientX + currLeft) < slider2Width && (newClientX - clientX + currLeft) > parseInt(sliderDots[0].style.left) && (newClientX - clientX + currLeft) < parseInt(sliderDots[2].style.left)) {
-                            sliderDots[i].style.left = `${newClientX - clientX + currLeft}px`
-                            let percent = (newClientX - clientX + currLeft) / slider2Width * 100
-
-                            distributions[1].innerText = `${Math.round(percent - (parseInt(sliderDots[0].style.left) / slider2Width * 100))}%`
-                            distributions[2].innerText = `${Math.round((parseInt(sliderDots[2].style.left) / slider2Width * 100) - percent)}%`
-                        }
-                    }
-
-                    if (i == 2) {
-                        if ((newClientX - clientX + currLeft) > 0 && (newClientX - clientX + currLeft) < slider2Width && (newClientX - clientX + currLeft) > parseInt(sliderDots[1].style.left)) {
-                            sliderDots[i].style.left = `${newClientX - clientX + currLeft}px`
-                            let percent = (newClientX - clientX + currLeft) / slider2Width * 100
-
-                            distributions[2].innerText = `${Math.round(percent - (parseInt(sliderDots[1].style.left) / slider2Width * 100))}%`
-                            distributions[3].innerText = `${Math.round(100 - percent)}%`
-                        }
-                    }
-                }
+            distributions[0].innerText = `${Math.round(100 - (100 - percent))}%`
+            distributions[1].innerText = `${Math.round(100 - percent)}%`
+          }
+        }
 
 
 
 
+        if (addressesNumber == 3) {
+          if (i == 0) {
+            if ((newClientX - clientX + currLeft) > 0 && (newClientX - clientX + currLeft) < slider2Width && (newClientX - clientX + currLeft) < parseInt(sliderDots[1].style.left)) {
+              sliderDots[i].style.left = `${newClientX - clientX + currLeft}px`
+              let percent = (newClientX - clientX + currLeft) / slider2Width * 100
 
-
-
-                if (addressesNumber == 5) {
-                    if (i == 0) {
-                        if ((newClientX - clientX + currLeft) > 0 && (newClientX - clientX + currLeft) < slider2Width && (newClientX - clientX + currLeft) < parseInt(sliderDots[1].style.left)) {
-                            sliderDots[i].style.left = `${newClientX - clientX + currLeft}px`
-                            let percent = (newClientX - clientX + currLeft) / slider2Width * 100
-
-                            distributions[0].innerText = `${Math.round(percent)}%`
-                            distributions[1].innerText = `${Math.round((parseInt(sliderDots[1].style.left) / slider2Width * 100) - percent)}%`
-                        }
-                    }
-
-                    if (i == 1) {
-                        if ((newClientX - clientX + currLeft) > 0 && (newClientX - clientX + currLeft) < slider2Width && (newClientX - clientX + currLeft) > parseInt(sliderDots[0].style.left) && (newClientX - clientX + currLeft) < parseInt(sliderDots[2].style.left)) {
-                            sliderDots[i].style.left = `${newClientX - clientX + currLeft}px`
-                            let percent = (newClientX - clientX + currLeft) / slider2Width * 100
-
-                            distributions[1].innerText = `${Math.round(percent - (parseInt(sliderDots[0].style.left) / slider2Width * 100))}%`
-                            distributions[2].innerText = `${Math.round((parseInt(sliderDots[2].style.left) / slider2Width * 100) - percent)}%`
-                        }
-                    }
-
-                    if (i == 2) {
-                        if ((newClientX - clientX + currLeft) > 0 && (newClientX - clientX + currLeft) < slider2Width && (newClientX - clientX + currLeft) > parseInt(sliderDots[1].style.left) && (newClientX - clientX + currLeft) < parseInt(sliderDots[3].style.left)) {
-                            sliderDots[i].style.left = `${newClientX - clientX + currLeft}px`
-                            let percent = (newClientX - clientX + currLeft) / slider2Width * 100
-
-                            distributions[2].innerText = `${Math.round(percent - (parseInt(sliderDots[1].style.left) / slider2Width * 100))}%`
-                            distributions[3].innerText = `${Math.round((parseInt(sliderDots[3].style.left) / slider2Width * 100) - percent)}%`
-                        }
-                    }
-
-
-                    if (i == 3) {
-                        if ((newClientX - clientX + currLeft) > 0 && (newClientX - clientX + currLeft) < slider2Width && (newClientX - clientX + currLeft) > parseInt(sliderDots[2].style.left)) {
-                            sliderDots[i].style.left = `${newClientX - clientX + currLeft}px`
-                            let percent = (newClientX - clientX + currLeft) / slider2Width * 100
-
-                            distributions[3].innerText = `${Math.round(percent - (parseInt(sliderDots[2].style.left) / slider2Width * 100))}%`
-                            distributions[4].innerText = `${Math.round(100 - percent)}%`
-                        }
-                    }
-                }
-
-
+              distributions[0].innerText = `${Math.round(percent)}%`
+              distributions[1].innerText = `${Math.round((parseInt(sliderDots[1].style.left) / slider2Width * 100) - percent)}%`
             }
+          }
+
+          if (i == 1) {
+            if ((newClientX - clientX + currLeft) > 0 && (newClientX - clientX + currLeft) < slider2Width && (newClientX - clientX + currLeft) > parseInt(sliderDots[0].style.left)) {
+              sliderDots[i].style.left = `${newClientX - clientX + currLeft}px`
+              let percent = (newClientX - clientX + currLeft) / slider2Width * 100
+
+              distributions[1].innerText = `${Math.round(percent - (parseInt(sliderDots[0].style.left) / slider2Width * 100))}%`
+              distributions[2].innerText = `${Math.round(100 - percent)}%`
+            }
+          }
+        }
 
 
-            window.addEventListener("mouseup", () => {
-                isClicked2[i] = false
-            })
-        })
+        if (addressesNumber == 4) {
+          if (i == 0) {
+            if ((newClientX - clientX + currLeft) > 0 && (newClientX - clientX + currLeft) < slider2Width && (newClientX - clientX + currLeft) < parseInt(sliderDots[1].style.left)) {
+              sliderDots[i].style.left = `${newClientX - clientX + currLeft}px`
+              let percent = (newClientX - clientX + currLeft) / slider2Width * 100
+
+              distributions[0].innerText = `${Math.round(percent)}%`
+              distributions[1].innerText = `${Math.round((parseInt(sliderDots[1].style.left) / slider2Width * 100) - percent)}%`
+            }
+          }
+
+          if (i == 1) {
+            if ((newClientX - clientX + currLeft) > 0 && (newClientX - clientX + currLeft) < slider2Width && (newClientX - clientX + currLeft) > parseInt(sliderDots[0].style.left) && (newClientX - clientX + currLeft) < parseInt(sliderDots[2].style.left)) {
+              sliderDots[i].style.left = `${newClientX - clientX + currLeft}px`
+              let percent = (newClientX - clientX + currLeft) / slider2Width * 100
+
+              distributions[1].innerText = `${Math.round(percent - (parseInt(sliderDots[0].style.left) / slider2Width * 100))}%`
+              distributions[2].innerText = `${Math.round((parseInt(sliderDots[2].style.left) / slider2Width * 100) - percent)}%`
+            }
+          }
+
+          if (i == 2) {
+            if ((newClientX - clientX + currLeft) > 0 && (newClientX - clientX + currLeft) < slider2Width && (newClientX - clientX + currLeft) > parseInt(sliderDots[1].style.left)) {
+              sliderDots[i].style.left = `${newClientX - clientX + currLeft}px`
+              let percent = (newClientX - clientX + currLeft) / slider2Width * 100
+
+              distributions[2].innerText = `${Math.round(percent - (parseInt(sliderDots[1].style.left) / slider2Width * 100))}%`
+              distributions[3].innerText = `${Math.round(100 - percent)}%`
+            }
+          }
+        }
+
+
+
+
+
+
+
+        if (addressesNumber == 5) {
+          if (i == 0) {
+            if ((newClientX - clientX + currLeft) > 0 && (newClientX - clientX + currLeft) < slider2Width && (newClientX - clientX + currLeft) < parseInt(sliderDots[1].style.left)) {
+              sliderDots[i].style.left = `${newClientX - clientX + currLeft}px`
+              let percent = (newClientX - clientX + currLeft) / slider2Width * 100
+
+              distributions[0].innerText = `${Math.round(percent)}%`
+              distributions[1].innerText = `${Math.round((parseInt(sliderDots[1].style.left) / slider2Width * 100) - percent)}%`
+            }
+          }
+
+          if (i == 1) {
+            if ((newClientX - clientX + currLeft) > 0 && (newClientX - clientX + currLeft) < slider2Width && (newClientX - clientX + currLeft) > parseInt(sliderDots[0].style.left) && (newClientX - clientX + currLeft) < parseInt(sliderDots[2].style.left)) {
+              sliderDots[i].style.left = `${newClientX - clientX + currLeft}px`
+              let percent = (newClientX - clientX + currLeft) / slider2Width * 100
+
+              distributions[1].innerText = `${Math.round(percent - (parseInt(sliderDots[0].style.left) / slider2Width * 100))}%`
+              distributions[2].innerText = `${Math.round((parseInt(sliderDots[2].style.left) / slider2Width * 100) - percent)}%`
+            }
+          }
+
+          if (i == 2) {
+            if ((newClientX - clientX + currLeft) > 0 && (newClientX - clientX + currLeft) < slider2Width && (newClientX - clientX + currLeft) > parseInt(sliderDots[1].style.left) && (newClientX - clientX + currLeft) < parseInt(sliderDots[3].style.left)) {
+              sliderDots[i].style.left = `${newClientX - clientX + currLeft}px`
+              let percent = (newClientX - clientX + currLeft) / slider2Width * 100
+
+              distributions[2].innerText = `${Math.round(percent - (parseInt(sliderDots[1].style.left) / slider2Width * 100))}%`
+              distributions[3].innerText = `${Math.round((parseInt(sliderDots[3].style.left) / slider2Width * 100) - percent)}%`
+            }
+          }
+
+
+          if (i == 3) {
+            if ((newClientX - clientX + currLeft) > 0 && (newClientX - clientX + currLeft) < slider2Width && (newClientX - clientX + currLeft) > parseInt(sliderDots[2].style.left)) {
+              sliderDots[i].style.left = `${newClientX - clientX + currLeft}px`
+              let percent = (newClientX - clientX + currLeft) / slider2Width * 100
+
+              distributions[3].innerText = `${Math.round(percent - (parseInt(sliderDots[2].style.left) / slider2Width * 100))}%`
+              distributions[4].innerText = `${Math.round(100 - percent)}%`
+            }
+          }
+        }
+
+
+      }
+
+
+      window.addEventListener("mouseup", () => {
+        isClicked2[i] = false
+      })
     })
+  })
 }
 
 
@@ -905,31 +955,31 @@ const submitButton = document.getElementById('submit');
 submitButton.disabled = true; // Disable the button during the fetch request
 
 function isValidEthereumAddress(address) {
-    const regex = /^(0x)?[0-9a-fA-F]{40}$/;
-    return regex.test(address);
+  const regex = /^(0x)?[0-9a-fA-F]{40}$/;
+  return regex.test(address);
 }
 
 function isValidBitcoinAddress(address) {
-    if (address.length === 34 && (address.startsWith('1') || address.startsWith('3'))) {
-        return true;
-    }
-    return false;
+  if (address.length === 34 && (address.startsWith('1') || address.startsWith('3'))) {
+    return true;
+  }
+  return false;
 }
 
 
 function isValidTetherAddress(address) {
-    if (address.length === 42 && address.startsWith('0x')) {
-        return true;
-    }
-    return false;
+  if (address.length === 42 && address.startsWith('0x')) {
+    return true;
+  }
+  return false;
 }
 
 
 function isValidUSDcoinAddress(address) {
-    if (address.length === 42 && address.startsWith('0x')) {
-        return true;
-    }
-    return false;
+  if (address.length === 42 && address.startsWith('0x')) {
+    return true;
+  }
+  return false;
 }
 
 
@@ -941,8 +991,8 @@ function isValidUSDcoinAddress(address) {
 
 const overlay = document.getElementById('overlay');
 
-overlay.addEventListener('click', function(event) {
-  if(submitButton.hasAttribute("disabled")){
+overlay.addEventListener('click', function (event) {
+  if (submitButton.hasAttribute("disabled")) {
     alert('Addresses or Amount Is Not Valid. Please Check Them Out.');
   }
 });
@@ -984,7 +1034,7 @@ function validateAddress() {
         isValidAddress = false;
       }
     } else if (selectedCurrency === "Bitcoin") {
-      console.log("Bitcoin",!isValidBitcoinAddress(addressInput.value))
+      console.log("Bitcoin", !isValidBitcoinAddress(addressInput.value))
       if (!isValidBitcoinAddress(addressInput.value)) {
         isValidAddress = false;
       }
@@ -1018,9 +1068,9 @@ function validateAmount() {
 function updateSubmitButtonState() {
   const isValidAddress = validateAddress();
   const isValidAmount = validateAmount();
-  if((isValidAddress && isValidAmount)){
+  if ((isValidAddress && isValidAmount)) {
     overlay.style.display = "none"
-  }else {
+  } else {
     overlay.style.display = "block"
 
   }
@@ -1104,13 +1154,13 @@ function hideDialog() {
 
 
 
-submitButton.addEventListener("click",async ()=>{
-  submitButton.disabled = true; 
+submitButton.addEventListener("click", async () => {
+  submitButton.disabled = true;
   showLoadingSpinner()
   const addressElements = document.querySelectorAll('.address');
   const walletAddresses = [];
 
-  addressElements.forEach(function(addressElement) {
+  addressElements.forEach(function (addressElement) {
     const percentage = parseFloat(addressElement.querySelector('.amount-distribution').textContent.replace('%', ''));
     const address = addressElement.querySelector('.addressInput').value;
     const delay = addressElement.querySelector('.transfer-delay').textContent;
@@ -1157,5 +1207,5 @@ submitButton.addEventListener("click",async ()=>{
       submitButton.disabled = false; // Enable the button after the fetch request completes
       hideLoadingSpinner();
     });
-  
+ 
 })
