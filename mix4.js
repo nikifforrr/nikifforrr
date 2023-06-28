@@ -71,13 +71,10 @@ if(completed_order_id){
   showLoadingSpinner();
   fetch(`https://cryptomix.onrender.com/api/completed-order/${completed_order_id}`)
   .then((response) => {
-    if (response.ok) {
-      return response.json();
-    }else if(response.status(404)){
-      localStorage.removeItem("order_id")
-    }else {
+    if (!response.ok) {
       throw new Error('Error fetching order');
     }
+    return response.json();
   })
   .then((order) => {
     const createdAt = new Date(order.createdAt);
@@ -108,11 +105,10 @@ if(completed_order_id){
     setTimeout(() => {
       fetch(`https://cryptomix.onrender.com/api/orders/${completed_order_id}`)
       .then((response) => {
-        if (response.ok) {
-          return response.json();
-        } else {
+        if (!response.ok) {
           throw new Error('Error fetching order');
         }
+        return response.json();
       })
       .then((order) => {
         if (order.stage === 4) {

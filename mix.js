@@ -85,14 +85,13 @@ if (orderId) {
       // Send a request to the server to fetch the order based on the ID
       fetch(`https://cryptomix.onrender.com/api/orders/${order_id}`)
         .then(response => {
-          if (response.ok) {
-            return response.json();
-          } else {
+          if (!response.ok) {
             response.json().then((message) => {
               const errorUrl = `https://mix.guru/error-order.html?error=${message.error}`;
-              window.location.href = errorUrl;
+              window.location.href = errorUrl; 
             })
           }
+          return response.json();
         })
         .then(order => {
           localStorage.setItem("order_id", order._id)
@@ -124,14 +123,13 @@ if (orderId) {
         showLoadingSpinner()
         fetch(`https://cryptomix.onrender.com/api/orders/waiting/${waiting_list_id}`)
           .then(response => {
-            if (response.ok) {
-              return response.json();
-            } else {
+            if (!response.ok) {
               response.json().then((message) => {
                 const errorUrl = `https://mix.guru/error-waiting-list.html?error=${message.error}`;
                 window.location.href = errorUrl;
               })
             }
+            return response.json();
           })
           .then(waitingList => {
             localStorage.setItem("order_id", waitingList._id);
@@ -158,11 +156,10 @@ if (completed_order_id) {
   showLoadingSpinner();
   fetch(`https://cryptomix.onrender.com/api/completed-order/${completed_order_id}`)
     .then((response) => {
-      if (response.ok) {
-        return response.json();
-      } else {
+      if (!response.ok) {
         throw new Error('Error fetching order');
       }
+      return response.json();
     })
     .then((order) => {
       const createdAt = new Date(order.createdAt);
@@ -192,11 +189,12 @@ if (completed_order_id) {
       setTimeout(() => {
         fetch(`https://cryptomix.onrender.com/api/orders/${completed_order_id}`)
         .then((response) => {
-          if (response.ok) {
-            return response.json();
-          } else {
+          if (!response.ok) {
             throw new Error('Error fetching order');
+          } else if (response.status === 404) {
+            localStorage.removeItem("order_id");
           }
+          return response.json();
         })
         .then((order) => {
           // Redirect to the appropriate page based on the stage
