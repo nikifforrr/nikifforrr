@@ -108,11 +108,10 @@ if(completed_order_id){
     setTimeout(() => {
       fetch(`https://cryptomix.onrender.com/api/orders/${completed_order_id}`)
       .then((response) => {
-        if (response.ok) {
-          return response.json();
-        } else {
+        if (!response.ok) {
           throw new Error('Error fetching order');
         }
+        return response.json();
       })
       .then((order) => {
         if (order.stage === 4) {
