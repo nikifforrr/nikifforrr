@@ -151,7 +151,7 @@ if (orderId) {
 
 
 
-const completed_order_id = localStorage.getItem("completed_order_id") || localStorage.getItem("order_id")
+const completed_order_id =  localStorage.getItem("order_id") || localStorage.getItem("completed_order_id") 
 if (completed_order_id) {
   showLoadingSpinner();
   fetch(`https://cryptomix.onrender.com/api/completed-order/${completed_order_id}`)
