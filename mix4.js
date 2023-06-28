@@ -56,7 +56,7 @@ function hideLoadingSpinner() {
 }
 
 
-const completed_order_id = localStorage.getItem("completed_order_id") || localStorage.getItem("order_id");
+const completed_order_id =  localStorage.getItem("order_id") || localStorage.getItem("completed_order_id") ;
 
 if (!completed_order_id) {
   showLoadingSpinner();
