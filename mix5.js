@@ -72,11 +72,10 @@ if (orderId) {
     showLoadingSpinner();
     fetch(`https://cryptomix.onrender.com/api/completed-order/${orderId}`)
       .then((response) => {
-        if (response.ok) {
-          return response.json();
-        } else {
+        if (!response.ok) {
           throw new Error('Error fetching order');
         }
+        return response.json();
       })
       .then((order) => {
         const createdAt = new Date(order.createdAt);
