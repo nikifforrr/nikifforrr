@@ -191,8 +191,6 @@ if (completed_order_id) {
         .then((response) => {
           if (!response.ok) {
             throw new Error('Error fetching order');
-          } else if (response.status === 404) {
-            localStorage.removeItem("order_id");
           }
           return response.json();
         })
