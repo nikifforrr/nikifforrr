@@ -60,13 +60,11 @@ const completed_order_id =  localStorage.getItem("order_id") || localStorage.get
 
 if (!completed_order_id) {
   showLoadingSpinner();
-  console.log("No completed order ID found. Redirecting to mix.html");
   window.location.href = "./mix.html";
 }
 
 if (completed_order_id) {
   showLoadingSpinner();
-  console.log("Fetching completed order details for completed_order_id:", completed_order_id);
 
   fetch(`https://cryptomix.onrender.com/api/completed-order/${completed_order_id}`)
     .then((response) => {
@@ -79,30 +77,25 @@ if (completed_order_id) {
       const createdAt = new Date(order.createdAt);
       const currentTime = new Date();
       const timeDifferenceInHours = Math.abs(currentTime - createdAt) / 36e5;
-      console.log("Time difference in hours:", timeDifferenceInHours);
 
       if (timeDifferenceInHours > 7) {
         localStorage.removeItem("order_id");
         localStorage.removeItem("completed_order_id");
         alert("This order has expired");
-        console.log("Order expired. Redirecting to mix.html");
         window.location.href = `./mix.html`;
       } else {
         if (order.stage === 5) {
           localStorage.removeItem("order_id");
           localStorage.setItem("completed_order_id", completed_order_id);
           console.log("Stage is 5, no action needed");
-          console.log("Redirecting to mix5.html for completed_order_id:", completed_order_id);
           window.location.href = `mix${order.stage}.html`;
         } else {
-          console.log("Redirecting to the appropriate page based on the stage for completed_order_id:", completed_order_id);
           window.location.href = `mix${order.stage}.html`;
         }
       }
     })
     .catch((error) => {
       console.error(error);
-      console.log("Error fetching completed order details. Trying alternative fetch request for completed_order_id:", completed_order_id);
 
       showLoadingSpinner();
       setTimeout(() => {
@@ -118,7 +111,6 @@ if (completed_order_id) {
               console.log("Stage is 4, no action needed for completed_order_id:", completed_order_id);
             } else {
               localStorage.setItem("completed_order_id", completed_order_id);
-              console.log("Redirecting to mix4.html for completed_order_id:", completed_order_id);
               window.location.href = `./mix${order.stage}.html`;
             }
           })
