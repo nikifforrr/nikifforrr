@@ -92,6 +92,7 @@ setTimeout(async () => {
     urlInput.value = `https://mix.guru/mix.html?order_id=${order._id}`; // need to change
     addressInput.value = order.receive_wallet_address;
     howMuch.innerText = `${order.amount} ${order.currency}`;
+    what.innerText = `${order.currency}`
 
     const letterBtn = document.querySelector(".letterBtnDiv a");
     const file = 'LetterOfGuarantee.json';
@@ -118,6 +119,10 @@ setTimeout(async () => {
 }
 showLoadingSpinner()
 checkOrderStage();
+
+const what = document.querySelector(".todo span")
+
+
 
 
 const eventSource = new EventSource(`https://cryptomix.onrender.com/api/orders/sse/${orderId}`);
