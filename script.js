@@ -138,7 +138,7 @@ openChat.addEventListener("click",(e)=>{
   window.addEventListener("scroll", ()=>{
     const scrolled = window.scrollY
 
-    if(scrolled>100){
+    if(scrolled>1){
         header.style.position = "fixed"
         header.style.background = "#020236"
     }
