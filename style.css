@@ -432,6 +432,7 @@ header {
     align-items: center;
     width: 100%;
     justify-content: center;
+    gap: 40px;
 }
 
 .works {
