@@ -461,15 +461,15 @@ header {
 
 .works-img {
     position: absolute;
-    top: 22px;
-    left: 22px;
+    top: 26px;
+    left: 26px;
     transform: scale(0.9);
 }
 
 .works-text {
     position: absolute;
-    bottom: 65px;
-    left: 105px;
+    top: 95px;
+    left: 120px;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -478,11 +478,13 @@ header {
 }
 
 .works:nth-child(n+3)>.works-text{
-    bottom: 45px;
+    gap: 10px;
+    top: 85px;
 }
 
 .twoWorks .works>.works-text{
-    bottom: 45px;
+    gap: 10px;
+    top: 85px;
 }
 
 .works-text>h6 {
@@ -505,8 +507,8 @@ header {
     right: 0;
     bottom: 0;
     z-index: -1;
-    height: 234px;
-    min-height: 234px;
+    height: 254px;
+    min-height: 254px;
 }
 
 .number {
