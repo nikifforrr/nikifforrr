@@ -24,6 +24,10 @@ button {
 
 }
 
+img{
+    
+}
+
 .container {
     max-width: 1500px;
     padding: 0 10px;
@@ -2068,6 +2072,7 @@ input{
 
     .grid-item-right p{
         font-size: 11px;
+        line-height: 15px;
     }
 
 
@@ -2090,15 +2095,18 @@ input{
     }
 
     .twoWorks .works> .works-text{
-        bottom: 40px;
+        top: 47px;
+        gap: 5px;
     }
 
     .threeWorks .works> .works-text{
-        bottom: 40px;
+        top: 48px;
+        gap: 5px;
     }
 
     .threeWorks .works:nth-child(1)> .works-text{
-        bottom: 50px;
+        top: 60px;
+        gap: 5px;
     }
     .works{
         width: 100%;
