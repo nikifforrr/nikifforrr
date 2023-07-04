@@ -68,176 +68,180 @@ function hideLoadingSpinner() {
 
 
 const urlParams = new URLSearchParams(window.location.search);
+const waitingListId = urlParams.get('waiting_list_id');
 const orderId = urlParams.get('order_id');
 
-
-
-if (orderId) {
-  processOrder(orderId)
-  function processOrder(order_id) {
-    const isValidIdFormat = /^[0-9a-fA-F]{24}$/.test(order_id);
-    if (!isValidIdFormat) {
-      const errorMessage = 'Invalid Order ID format';
-      const errorUrl = `https://mix.guru/error-order.html?error=${encodeURIComponent(errorMessage)}`;
-      window.location.href = errorUrl;
-    } else {
-      showLoadingSpinner()
-      // Send a request to the server to fetch the order based on the ID
-      fetch(`https://cryptomix.onrender.com/api/orders/${order_id}`)
-        .then(response => {
-          if (!response.ok) {
-            response.json().then((message) => {
-              const errorUrl = `https://mix.guru/error-order.html?error=${message.error}`;
-              window.location.href = errorUrl; 
-            })
-          }
-          return response.json();
-        })
-        .then(order => {
-          localStorage.setItem("order_id", order._id)
-          console.log(order)
-          window.location.href = `./mix${order.stage}.html`
-        })
-        .catch(error => {
-          const errorUrl = `https://mix.guru/error-order.html?error=${error}`;
-          window.location.href = errorUrl;
-        }).finally(() => {
-          hideLoadingSpinner()
-        })
-    }
-  }
-} else {
-
-  const waitingListId = urlParams.get('waiting_list_id');
-  if (waitingListId) {
-    processWaitingList(waitingListId);
-
-    function processWaitingList(waiting_list_id) {
-      const isValidIdFormat = /^[0-9a-fA-F]{24}$/.test(waiting_list_id);
-      if (!isValidIdFormat) {
-        const errorMessage = 'Invalid Waiting List ID format';
-        const errorUrl = `https://mix.guru/error-waiting-list.html?error=${encodeURIComponent(errorMessage)}`;
-        window.location.href = errorUrl;
-      } else {
-        // Send a request to the server to fetch the waiting list based on the ID
-        showLoadingSpinner()
-        fetch(`https://cryptomix.onrender.com/api/orders/waiting/${waiting_list_id}`)
-          .then(response => {
-            if (!response.ok) {
-              response.json().then((message) => {
-                const errorUrl = `https://mix.guru/error-waiting-list.html?error=${message.error}`;
-                window.location.href = errorUrl;
-              })
-            }
-            return response.json();
-          })
-          .then(waitingList => {
-            localStorage.setItem("order_id", waitingList._id);
-            window.location.href = `./mix${waitingList.stage}.html`
-          })
-          .catch(error => {
-            const errorUrl = `https://mix.guru/error-waiting-list.html?error=${error}`;
-            window.location.href = errorUrl;
-          }).finally(() => {
-            hideLoadingSpinner()
-          })
-      }
-    }
-  }
-}
-
-
-
-
-
-
-const completed_order_id =  localStorage.getItem("order_id") || localStorage.getItem("completed_order_id") 
-if (completed_order_id) {
-  showLoadingSpinner();
-  fetch(`https://cryptomix.onrender.com/api/completed-order/${completed_order_id}`)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error('Error fetching order');
-      }
-      return response.json();
-    })
-    .then((order) => {
-      const createdAt = new Date(order.createdAt);
-      const currentTime = new Date();
-      const timeDifferenceInHours = Math.abs(currentTime - createdAt) / 36e5;
-      console.log(timeDifferenceInHours)
-      if (timeDifferenceInHours > 7) {
-        localStorage.removeItem("order_id");
-        localStorage.removeItem("completed_order_id");
-        alert("This order has completed");
-        window.location.href = `./mix.html`;
-      } else {
-        if (order.stage === 5) {
-          localStorage.removeItem("order_id");
-          window.location.href = `mix${order.stage}.html`;
-          console.log("Stage is 5, no action needed");
-        } else {
-          // Redirect to the appropriate page based on the stage
-          window.location.href = `mix${order.stage}.html`;
-        }
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-      // Handle the error and try an alternative fetch request
-      showLoadingSpinner();
-      setTimeout(() => {
-        fetch(`https://cryptomix.onrender.com/api/orders/${completed_order_id}`)
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error('Error fetching order');
-          }
-          return response.json();
-        })
-        .then((order) => {
-          // Redirect to the appropriate page based on the stage
-          localStorage.removeItem("waiting_list_id");
-          localStorage.setItem("completed_order_id", completed_order_id);
-          window.location.href = `./mix${order.stage}.html`;
-        })
-        .catch((error) => {
-          console.error(error);
-        }).finally(() => {
-          hideLoadingSpinner();
-        })
-      }, 500);
-
-    })
-    .finally(() => {
-      hideLoadingSpinner();
-    });
-
-} else {
-  const waiting_list_id = localStorage.getItem("waiting_list_id")
-  if (waiting_list_id) {
+function processOrder(order_id) {
+  const isValidIdFormat = /^[0-9a-fA-F]{24}$/.test(order_id);
+  if (!isValidIdFormat) {
+    const errorMessage = 'Invalid Order ID format';
+    const errorUrl = `https://mix.guru/error-order.html?error=${encodeURIComponent(errorMessage)}`;
+    window.location.href = errorUrl;
+  } else {
     showLoadingSpinner()
-    fetch(`https://cryptomix.onrender.com/api/orders/${waiting_list_id}`)
+    // Send a request to the server to fetch the order based on the ID
+    fetch(`https://cryptomix.onrender.com/api/orders/${order_id}`)
       .then(response => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error('Error fetching order');
+        if (!response.ok) {
+          response.json().then((message) => {
+            const errorUrl = `https://mix.guru/error-order.html?error=${message.error}`;
+            window.location.href = errorUrl; 
+          })
         }
+        return response.json();
       })
       .then(order => {
-        // Redirect to the appropriate page based on the stage
-        localStorage.removeItem("waiting_list_id");
         localStorage.setItem("order_id", order._id)
-        window.location.href = `./mix${order.stage}.html`;
+        console.log(order)
+        window.location.href = `./mix${order.stage}.html`
       })
       .catch(error => {
-        console.error(error);
+        const errorUrl = `https://mix.guru/error-order.html?error=${error}`;
+        window.location.href = errorUrl;
       }).finally(() => {
         hideLoadingSpinner()
       })
   }
-
 }
+
+
+
+
+function processWaitingList(waiting_list_id) {
+  const isValidIdFormat = /^[0-9a-fA-F]{24}$/.test(waiting_list_id);
+  if (!isValidIdFormat) {
+    const errorMessage = 'Invalid Waiting List ID format';
+    const errorUrl = `https://mix.guru/error-waiting-list.html?error=${encodeURIComponent(errorMessage)}`;
+    window.location.href = errorUrl;
+  } else {
+    // Send a request to the server to fetch the waiting list based on the ID
+    showLoadingSpinner()
+    fetch(`https://cryptomix.onrender.com/api/orders/waiting/${waiting_list_id}`)
+      .then(response => {
+        if (!response.ok) {
+          response.json().then((message) => {
+            const errorUrl = `https://mix.guru/error-waiting-list.html?error=${message.error}`;
+            window.location.href = errorUrl;
+          })
+        }
+        return response.json();
+      })
+      .then(waitingList => {
+        localStorage.setItem("order_id", waitingList._id);
+        window.location.href = `./mix${waitingList.stage}.html`
+      })
+      .catch(error => {
+        const errorUrl = `https://mix.guru/error-waiting-list.html?error=${error}`;
+        window.location.href = errorUrl;
+      }).finally(() => {
+        hideLoadingSpinner()
+      })
+  }
+}
+if (orderId) {
+  processOrder(orderId)
+} else if(waitingListId && !orderId) {
+  processWaitingList(waitingListId);
+}else {
+
+
+
+  const completed_order_id =  localStorage.getItem("order_id") || localStorage.getItem("completed_order_id") 
+  if (completed_order_id) {
+    showLoadingSpinner();
+    fetch(`https://cryptomix.onrender.com/api/completed-order/${completed_order_id}`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Error fetching order');
+        }
+        return response.json();
+      })
+      .then((order) => {
+        const createdAt = new Date(order.createdAt);
+        const currentTime = new Date();
+        const timeDifferenceInHours = Math.abs(currentTime - createdAt) / 36e5;
+        console.log(timeDifferenceInHours)
+        if (timeDifferenceInHours > 7) {
+          localStorage.removeItem("order_id");
+          localStorage.removeItem("completed_order_id");
+          alert("This order has completed");
+          window.location.href = `./mix.html`;
+        } else {
+          if (order.stage === 5) {
+            localStorage.removeItem("order_id");
+            window.location.href = `mix${order.stage}.html`;
+            console.log("Stage is 5, no action needed");
+          } else {
+            // Redirect to the appropriate page based on the stage
+            window.location.href = `mix${order.stage}.html`;
+          }
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        // Handle the error and try an alternative fetch request
+        showLoadingSpinner();
+        setTimeout(() => {
+          fetch(`https://cryptomix.onrender.com/api/orders/${completed_order_id}`)
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error('Error fetching order');
+            }
+            return response.json();
+          })
+          .then((order) => {
+            // Redirect to the appropriate page based on the stage
+            localStorage.removeItem("waiting_list_id");
+            if (order.stage > 3){
+              localStorage.setItem("completed_order_id", completed_order_id);
+              localStorage.removeItem("order_id")
+            }else {
+              localStorage.removeItem("completed_order_id") 
+            }
+            window.location.href = `./mix${order.stage}.html`;
+          })
+          .catch((error) => {
+            console.error(error);
+          }).finally(() => {
+            hideLoadingSpinner();
+          })
+        }, 500);
+  
+      })
+      .finally(() => {
+        hideLoadingSpinner();
+      });
+  
+  } else {
+    const waiting_list_id = localStorage.getItem("waiting_list_id")
+    if (waiting_list_id) {
+      showLoadingSpinner()
+      fetch(`https://cryptomix.onrender.com/api/orders/${waiting_list_id}`)
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error('Error fetching order');
+          }
+        })
+        .then(order => {
+          // Redirect to the appropriate page based on the stage
+          localStorage.removeItem("waiting_list_id");
+          localStorage.setItem("order_id", order._id)
+          window.location.href = `./mix${order.stage}.html`;
+        })
+        .catch(error => {
+          console.error(error);
+        }).finally(() => {
+          hideLoadingSpinner()
+        })
+    }
+  
+  }
+}
+
+
+
 
 
 

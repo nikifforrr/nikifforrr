@@ -139,6 +139,7 @@ eventSource.addEventListener("message", (event) => {
 eventSource.addEventListener("error", (error) => {
   console.error("SSE connection error:", error);
 });
+
 const copyBtns = document.querySelectorAll(".copy")
 
 copyBtns[0].addEventListener("click", ()=>{
