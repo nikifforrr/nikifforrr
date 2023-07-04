@@ -84,43 +84,6 @@ generateBtn.addEventListener("click", ()=>{
     nameInput.value = names[Math.floor(Math.random()*10)]
 })
 
-const openChat = document.querySelector("#chat")
-
-console.log(openChat)
-
-
-// Print the retrieved values
-
-openChat.addEventListener("click",(e)=>{
-    if(isRobot){
-        return
-    }
-    // Get the input values
-    const subjectSelect = document.querySelector('.contact-selected');
-    const letterNameInput = document.querySelector('.letterName');
-    const messageTextarea = document.querySelector('textarea');
-    
-    // Get the file input and selected file name
-    const selectedFileName = fileInput.files.length > 0 ? fileInput.files[0].name : '';
-    
-    // Retrieve the values
-    const subject = subjectSelect.textContent;
-    const name = nameInput.value;
-    const letterName = letterNameInput.value;
-    const message = messageTextarea.value;
-    console.log('Subject:', subject);
-    console.log('Name:', name);
-    console.log('Letter Name:', letterName);
-    console.log('Message:', message);
-    
-    // Complete the URL with the input values
-    const userData = `https://mix.guru/chat.html?subject=${encodeURIComponent(subject)}&name=${encodeURIComponent(name)}&message=${encodeURIComponent(message)}`;
-    
-    // Redirect the user to the completed URL
-    window.location.href = userData;
-    
-  })
-
 
   const leftHome = document.querySelector(".leftHome")
 
@@ -207,3 +170,51 @@ openChat.addEventListener("click",(e)=>{
       // See https://cloud.google.com/recaptcha-enterprise/docs/create-assessment
     });
 })
+
+
+
+
+
+
+
+
+
+
+const openChat = document.querySelector("#chat")
+
+console.log(openChat)
+
+
+// Print the retrieved values
+
+openChat.addEventListener("click",(e)=>{
+    if(isRobot){
+        return
+    }else {
+ // Get the input values
+ const subjectSelect = document.querySelector('.contact-selected');
+ const letterNameInput = document.querySelector('.letterName');
+ const messageTextarea = document.querySelector('textarea');
+ 
+ // Get the file input and selected file name
+ const selectedFileName = fileInput.files.length > 0 ? fileInput.files[0].name : '';
+ 
+ // Retrieve the values
+ const subject = subjectSelect.textContent;
+ const name = nameInput.value;
+ const letterName = letterNameInput.value;
+ const message = messageTextarea.value;
+ console.log('Subject:', subject);
+ console.log('Name:', name);
+ console.log('Letter Name:', letterName);
+ console.log('Message:', message);
+ 
+ // Complete the URL with the input values
+ const userData = `https://mix.guru/chat.html?subject=${encodeURIComponent(subject)}&name=${encodeURIComponent(name)}&message=${encodeURIComponent(message)}`;
+ 
+ // Redirect the user to the completed URL
+ window.location.href = userData;
+ 
+    }
+   
+  })
